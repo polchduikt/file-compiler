@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --configLoader native",
-    "build": "tsc -b && vite build --configLoader native",
-    "build:gh": "tsc -b && vite build --configLoader native",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:gh": "tsc -b && vite build",
+    "build:native": "tsc -b && vite build --configLoader native",
     "lint": "eslint .",
-    "preview": "vite preview --configLoader native"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
