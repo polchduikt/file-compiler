@@ -1,111 +1,250 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
+html,
+body,
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  height: 100%;
 }
 
 body {
   margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
+@layer base {
+  :root {
+    color-scheme: light;
+  }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+    }
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      @apply bg-slate-950 text-slate-100;
+    }
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+@layer utilities {
+  .panel {
+    @apply rounded-xl border border-slate-300 bg-white shadow;
   }
-}
-p {
-  margin: 0;
-}
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+  @media (prefers-color-scheme: dark) {
+    .panel {
+      @apply border-white/15 bg-white/5;
+    }
+  }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn {
+      @apply border-white/10 bg-white/10 text-white hover:bg-white/15 focus-visible:ring-indigo-400/70;
+    }
+  }
+
+  .btn-primary {
+    @apply border-indigo-200 bg-indigo-600 text-white hover:bg-indigo-700;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn-primary {
+      @apply border-indigo-400/30 bg-indigo-500/90 hover:bg-indigo-500;
+    }
+  }
+
+  .btn-danger {
+    @apply border-rose-200 bg-rose-600 text-white hover:bg-rose-700;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn-danger {
+      @apply border-rose-400/30 bg-rose-500/90 hover:bg-rose-500;
+    }
+  }
+
+  .btn-success {
+    @apply border-emerald-200 bg-emerald-600 text-white hover:bg-emerald-700;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn-success {
+      @apply border-emerald-400/30 bg-emerald-500/90 hover:bg-emerald-500;
+    }
+  }
+
+  .input {
+    @apply h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .input {
+      @apply border-white/10 bg-white/5 text-white placeholder:text-white/40 focus-visible:ring-indigo-400/70;
+    }
+  }
+
+  select.input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%234f46e5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    cursor: pointer;
+    @apply border-slate-300;
+  }
+
+  select.input:hover {
+    @apply border-slate-400;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    select.input {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23a78bfa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+      @apply border-white/20;
+    }
+
+    select.input:hover {
+      @apply border-white/30;
+    }
+  }
+
+  select.input option {
+    background-color: white;
+    color: #1f2937;
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+    font-weight: 500;
+  }
+
+  select.input option:hover {
+    background-color: #e0e7ff;
+    color: #1f2937;
+  }
+
+  select.input option:checked {
+    background: linear-gradient(#4f46e5, #4f46e5);
+    background-color: #4f46e5 !important;
+    color: white;
+    font-weight: 600;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    select.input option {
+      background-color: #1f2937;
+      color: #f3f4f6;
+      padding: 0.75rem;
+      margin: 0.25rem 0;
+    }
+
+    select.input option:hover {
+      background-color: #374151;
+      color: #f3f4f6;
+    }
+
+    select.input option:checked {
+      background: linear-gradient(#6366f1, #6366f1) !important;
+      background-color: #6366f1 !important;
+      color: white;
+      font-weight: 600;
+    }
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-700;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .chip {
+      @apply border-white/10 bg-white/5 text-white/80;
+    }
+  }
+
+  .kpi {
+    @apply rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .kpi {
+      @apply border-white/10 bg-white/5;
+    }
+  }
+
+  .monaco-editor {
+    font-family: 'Fira Code', 'SF Mono', 'Monaco', 'Menlo', monospace !important;
+    background-color: #1e1e1e !important;
+  }
+
+  .monaco-editor-background {
+    background-color: #1e1e1e !important;
+  }
+
+  .monaco-editor .margin {
+    background-color: #1e1e1e !important;
+    border-right: 1px solid #3e3e42;
+  }
+
+  .monaco-editor .lines-content {
+    padding: 0 !important;
+  }
+
+  .monaco-scrollable-element > .scrollbar {
+    opacity: 0.5;
+  }
+
+  .monaco-scrollable-element > .scrollbar:hover {
+    opacity: 0.8;
+  }
+
+  .monaco-scrollable-element .slider {
+    background-color: #424242;
+    border-radius: 4px;
+  }
+
+  .monaco-scrollable-element .slider:hover {
+    background-color: #4e4e4e;
+  }
+
+  .monaco-editor .bracket-match {
+    background-color: #3e3e4233;
+    border: 1px solid #515151;
+  }
+
+  .monaco-editor .indent-guide {
+    border-color: #3e3e4233;
+  }
+
+  .monaco-editor .active-indent-guide {
+    border-color: #70707099;
+  }
+
+  .monaco-editor .selected-text {
+    background-color: #264f78;
+  }
+
+  .monaco-editor .view-line {
+    letter-spacing: 0;
+  }
+
+  .monaco-editor .line-numbers {
+    color: #858585;
+    font-family: 'Fira Code', monospace;
+  }
+
+  .monaco-editor .line-numbers:hover {
+    color: #c6c6c6;
+  }
 }

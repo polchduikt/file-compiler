@@ -4,17 +4,26 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite --configLoader native",
+    "build": "tsc -b && vite build --configLoader native",
+    "build:gh": "tsc -b && vite build --configLoader native",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --configLoader native"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "autoprefixer": "^10.5.0",
+    "jszip": "^3.10.1",
+    "localforage": "^1.10.0",
+    "postcss": "^8.5.10",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "tailwindcss": "^4.2.2",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
