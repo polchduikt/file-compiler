@@ -101,7 +101,14 @@ function App() {
       <nav className="border-b border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-white/5">
         <div className="flex items-center justify-between gap-6 px-6 py-4">
           <div className="min-w-0 flex-1">
-            <h1 className="text-lg font-bold tracking-tight">File Compiler</h1>
+            <div className="flex items-center gap-3">
+              <img
+                src="./logo.png"
+                alt="File Compiler logo"
+                className="h-10 w-10 shrink-0 object-contain"
+              />
+              <h1 className="text-lg font-bold tracking-tight">File Compiler</h1>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
