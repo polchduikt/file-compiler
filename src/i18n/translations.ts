@@ -13,7 +13,11 @@ export const translations = {
     'meta.title': 'File Compiler - Merge local files in your browser',
     'meta.description':
       'Merge local files into one clean output directly in your browser. No backend, no uploads.',
+    'docs.metaDescription':
+      'Step-by-step documentation for File Compiler features, workspaces, merge options, and output.',
     'app.title': 'File Compiler',
+    'nav.app': 'App',
+    'nav.documentation': 'Documentation',
     'workspace.defaultPrefix': 'Workspace',
     'workspace.delete.confirm': 'Delete workspace "{name}"?',
     'workspace.delete.unnamed': 'Unnamed',
@@ -68,7 +72,11 @@ export const translations = {
     'meta.title': 'File Compiler - Обʼєднання локальних файлів у браузері',
     'meta.description':
       'Обʼєднуйте локальні файли в один результат прямо у браузері. Без бекенду і без завантажень на сервер.',
+    'docs.metaDescription':
+      'Коротка інструкція зі всіма функціями File Compiler: воркспейси, опції обʼєднання та результат.',
     'app.title': 'File Compiler',
+    'nav.app': 'Застосунок',
+    'nav.documentation': 'Документація',
     'workspace.defaultPrefix': 'Робочий простір',
     'workspace.delete.confirm': 'Видалити робочий простір "{name}"?',
     'workspace.delete.unnamed': 'Без назви',

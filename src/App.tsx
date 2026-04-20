@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Dropzone } from './components/Dropzone'
+import { DocumentationPage } from './components/DocumentationPage'
 import { FileList } from './components/FileList'
 import { OptionsPanel } from './components/OptionsPanel'
 import { PreviewPanel } from './components/PreviewPanel'
@@ -12,6 +13,7 @@ import { getNextWorkspaceName } from './lib/workspace'
 import { useWorkspaceStore } from './store/workspaceStore'
 
 type Theme = 'light' | 'dark'
+type Page = 'app' | 'docs'
 
 const THEME_STORAGE_KEY = 'file-compiler:theme:v1'
 const WORKSPACE_NAME_RE = /^workspace\s+(\d+)$/i
@@ -31,6 +33,11 @@ function localizeWorkspaceName(name: string, prefix: string) {
   const match = name.trim().match(WORKSPACE_NAME_RE)
   if (!match) return name
   return `${prefix} ${match[1]}`
+}
+
+function detectPageFromHash(): Page {
+  if (typeof window === 'undefined') return 'app'
+  return window.location.hash === '#docs' ? 'docs' : 'app'
 }
 
 function App() {
@@ -54,6 +61,7 @@ function App() {
   const [ingestError, setIngestError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [theme, setTheme] = useState<Theme>(() => detectTheme())
+  const [activePage, setActivePage] = useState<Page>(() => detectPageFromHash())
   const { mergeError, mergeResult } = useMergeResult(workspace)
 
   useEffect(() => {
@@ -67,12 +75,16 @@ function App() {
   }, [ensureWorkspaceLoaded, workspaceId])
 
   useEffect(() => {
-    document.title = t('meta.title')
+    document.title =
+      activePage === 'docs' ? `${t('nav.documentation')} - ${t('app.title')}` : t('meta.title')
     const descriptionTag = document.querySelector('meta[name="description"]')
     if (descriptionTag) {
-      descriptionTag.setAttribute('content', t('meta.description'))
+      descriptionTag.setAttribute(
+        'content',
+        activePage === 'docs' ? t('docs.metaDescription') : t('meta.description'),
+      )
     }
-  }, [t])
+  }, [activePage, t])
 
   useEffect(() => {
     const root = document.documentElement
@@ -93,6 +105,17 @@ function App() {
     [mergeResult, workspace?.settings.previewMaxChars],
   )
   const localizedWorkspacePrefix = t('workspace.defaultPrefix')
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const onHashChange = () => {
+      setActivePage(detectPageFromHash())
+    }
+
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
 
   const handleCopy = async () => {
     try {
@@ -149,6 +172,21 @@ function App() {
     await downloadTextAsFile(mergeResult.mergedText, plan.filename)
   }
 
+  const handleNavigatePage = (nextPage: Page) => {
+    setActivePage(nextPage)
+
+    if (nextPage === 'docs') {
+      if (window.location.hash !== '#docs') {
+        window.history.pushState(null, '', '#docs')
+      }
+      return
+    }
+
+    if (window.location.hash) {
+      window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`)
+    }
+  }
+
   return (
     <div className="flex h-full flex-col bg-slate-50 dark:bg-slate-950">
       <nav className="border-b border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-white/5">
@@ -160,7 +198,22 @@ function App() {
                 alt="File Compiler logo"
                 className="h-10 w-10 shrink-0 object-contain"
               />
-              <h1 className="text-lg font-bold tracking-tight">{t('app.title')}</h1>
+              <button
+                type="button"
+                className="text-lg font-bold tracking-tight hover:text-indigo-300"
+                onClick={() => handleNavigatePage('app')}
+              >
+                {t('app.title')}
+              </button>
+              <div className="ml-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  className={activePage === 'docs' ? 'btn btn-primary h-9 px-3' : 'btn h-9 px-3'}
+                  onClick={() => handleNavigatePage('docs')}
+                >
+                  {t('nav.documentation')}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -202,132 +255,138 @@ function App() {
         </div>
       </nav>
 
-      <div className="flex min-h-0 flex-1 gap-6 overflow-hidden p-6">
-        <aside className="flex w-80 flex-col gap-6 overflow-y-auto">
-          <Dropzone
-            disabled={!hydrated || !workspaceId}
-            onFiles={async (files) => {
-              if (!workspaceId) return
-              setIngestError(null)
-              const { accepted, rejected } = await ingestFiles(files)
-              if (rejected.length > 0) {
-                setIngestError(
-                  t('workspace.rejected', {
-                    count: rejected.length,
-                    name: rejected[0]?.name ?? '',
-                  }),
-                )
-              }
-              await upsertFiles(workspaceId, accepted)
-            }}
-          />
-
-          {ingestError ? (
-            <div className="rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-900 dark:border-rose-400/30 dark:bg-rose-500/10 dark:text-rose-200">
-              {ingestError}
-            </div>
-          ) : null}
-
-          <OptionsPanel
-            key={workspaceId ?? 'none'}
-            settings={workspace?.settings}
-            onChange={(patch) => {
-              if (!workspaceId) return
-              return updateSettings(workspaceId, patch)
-            }}
-          />
-        </aside>
-
-        <main className="flex min-w-0 flex-1 flex-col gap-6 overflow-hidden">
-          <section className="rounded-xl border border-slate-300 bg-white p-4 shadow dark:border-white/15 dark:bg-white/5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-2">
-                <select
-                  className="input w-44"
-                  disabled={!hydrated || workspaces.length === 0}
-                  value={workspaceId ?? ''}
-                  onChange={async (event) => {
-                    const id = event.target.value
-                    if (!id) return
-                    await handleSelectWorkspace(id)
-                  }}
-                >
-                  {workspaces.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {localizeWorkspaceName(item.name, localizedWorkspacePrefix)}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="button"
-                  className="btn btn-primary shrink-0"
-                  disabled={!hydrated}
-                  onClick={() => void handleCreateWorkspace()}
-                >
-                  {t('actions.new')}
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-danger shrink-0"
-                  disabled={!hydrated || !workspaceId || workspaces.length <= 1}
-                  title={
-                    workspaces.length <= 1
-                      ? t('workspace.delete.disabled')
-                      : t('workspace.delete.enabled')
-                  }
-                  onClick={() => void handleDeleteWorkspace()}
-                >
-                  {t('actions.delete')}
-                </button>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  disabled={!previewValue}
-                  onClick={() => void handleCopy()}
-                  title={t('actions.copyTitle')}
-                >
-                  {copied ? t('actions.copied') : t('actions.copy')}
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  disabled={!workspace?.settings.outputFileName || !mergeResult?.mergedText}
-                  onClick={() => void handleDownload()}
-                >
-                  {t('actions.download')}
-                </button>
-              </div>
-            </div>
-          </section>
-
-          {mergeError ? (
-            <div className="rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-900 dark:border-rose-400/30 dark:bg-rose-500/10 dark:text-rose-200">
-              {t(mergeError)}
-            </div>
-          ) : null}
-
-          <div className="grid min-h-0 flex-1 gap-6" style={{ gridTemplateColumns: '1fr 2fr' }}>
-            <FileList
-              files={workspace?.files}
-              onClear={() => {
+      {activePage === 'docs' ? (
+        <main className="min-h-0 flex-1 overflow-auto p-6">
+          <DocumentationPage />
+        </main>
+      ) : (
+        <div className="flex min-h-0 flex-1 gap-6 overflow-hidden p-6">
+          <aside className="flex w-80 flex-col gap-6 overflow-y-auto">
+            <Dropzone
+              disabled={!hydrated || !workspaceId}
+              onFiles={async (files) => {
                 if (!workspaceId) return
-                return clearFiles(workspaceId)
-              }}
-              onRemove={(fileId) => {
-                if (!workspaceId) return
-                return removeFile(workspaceId, fileId)
+                setIngestError(null)
+                const { accepted, rejected } = await ingestFiles(files)
+                if (rejected.length > 0) {
+                  setIngestError(
+                    t('workspace.rejected', {
+                      count: rejected.length,
+                      name: rejected[0]?.name ?? '',
+                    }),
+                  )
+                }
+                await upsertFiles(workspaceId, accepted)
               }}
             />
-            <PreviewPanel value={previewValue} files={workspace?.files} />
-          </div>
-        </main>
-      </div>
+
+            {ingestError ? (
+              <div className="rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-900 dark:border-rose-400/30 dark:bg-rose-500/10 dark:text-rose-200">
+                {ingestError}
+              </div>
+            ) : null}
+
+            <OptionsPanel
+              key={workspaceId ?? 'none'}
+              settings={workspace?.settings}
+              onChange={(patch) => {
+                if (!workspaceId) return
+                return updateSettings(workspaceId, patch)
+              }}
+            />
+          </aside>
+
+          <main className="flex min-w-0 flex-1 flex-col gap-6 overflow-hidden">
+            <section className="rounded-xl border border-slate-300 bg-white p-4 shadow dark:border-white/15 dark:bg-white/5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-2">
+                  <select
+                    className="input w-44"
+                    disabled={!hydrated || workspaces.length === 0}
+                    value={workspaceId ?? ''}
+                    onChange={async (event) => {
+                      const id = event.target.value
+                      if (!id) return
+                      await handleSelectWorkspace(id)
+                    }}
+                  >
+                    {workspaces.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {localizeWorkspaceName(item.name, localizedWorkspacePrefix)}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="button"
+                    className="btn btn-primary shrink-0"
+                    disabled={!hydrated}
+                    onClick={() => void handleCreateWorkspace()}
+                  >
+                    {t('actions.new')}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-danger shrink-0"
+                    disabled={!hydrated || !workspaceId || workspaces.length <= 1}
+                    title={
+                      workspaces.length <= 1
+                        ? t('workspace.delete.disabled')
+                        : t('workspace.delete.enabled')
+                    }
+                    onClick={() => void handleDeleteWorkspace()}
+                  >
+                    {t('actions.delete')}
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    disabled={!previewValue}
+                    onClick={() => void handleCopy()}
+                    title={t('actions.copyTitle')}
+                  >
+                    {copied ? t('actions.copied') : t('actions.copy')}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={!workspace?.settings.outputFileName || !mergeResult?.mergedText}
+                    onClick={() => void handleDownload()}
+                  >
+                    {t('actions.download')}
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {mergeError ? (
+              <div className="rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-900 dark:border-rose-400/30 dark:bg-rose-500/10 dark:text-rose-200">
+                {t(mergeError)}
+              </div>
+            ) : null}
+
+            <div className="grid min-h-0 flex-1 gap-6" style={{ gridTemplateColumns: '1fr 2fr' }}>
+              <FileList
+                files={workspace?.files}
+                onClear={() => {
+                  if (!workspaceId) return
+                  return clearFiles(workspaceId)
+                }}
+                onRemove={(fileId) => {
+                  if (!workspaceId) return
+                  return removeFile(workspaceId, fileId)
+                }}
+              />
+              <PreviewPanel value={previewValue} files={workspace?.files} />
+            </div>
+          </main>
+        </div>
+      )}
     </div>
   )
 }
