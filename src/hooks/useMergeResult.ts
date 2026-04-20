@@ -3,11 +3,12 @@ import MergeWorker from '../workers/mergeWorker?worker'
 import type { MergeRequest, MergeResponse, MergeResult, Workspace } from '../types'
 
 type MergeWorkspace = Pick<Workspace, 'files' | 'settings'>
+type MergeErrorKey = 'errors.mergeFailed' | 'errors.mergeWorkerUnavailable'
 
 export function useMergeResult(workspace: MergeWorkspace | undefined) {
   const workerRef = useRef<Worker | null>(null)
   const latestRequestIdRef = useRef(0)
-  const [mergeError, setMergeError] = useState<string | null>(null)
+  const [mergeError, setMergeError] = useState<MergeErrorKey | null>(null)
   const [mergeResult, setMergeResult] = useState<MergeResult | null>(null)
   const [isMerging, setIsMerging] = useState(false)
 
@@ -22,7 +23,10 @@ export function useMergeResult(workspace: MergeWorkspace | undefined) {
     }
 
     worker.onerror = (event) => {
-      setMergeError(event.message || 'Merge failed')
+      if (event.message) {
+        console.error(event.message)
+      }
+      setMergeError('errors.mergeFailed')
       setMergeResult(null)
       setIsMerging(false)
     }
@@ -49,7 +53,7 @@ export function useMergeResult(workspace: MergeWorkspace | undefined) {
     const worker = workerRef.current
     if (!worker) {
       queueMicrotask(() => {
-        setMergeError('Merge worker is not available')
+        setMergeError('errors.mergeWorkerUnavailable')
         setMergeResult(null)
         setIsMerging(false)
       })

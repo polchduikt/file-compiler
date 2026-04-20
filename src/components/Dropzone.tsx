@@ -1,8 +1,10 @@
 import type React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useI18n } from '../i18n/useI18n'
 import type { DropzoneProps } from './types'
 
 export function Dropzone({ disabled, onFiles }: DropzoneProps) {
+  const { t } = useI18n()
   const [isOver, setIsOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const folderInputRef = useRef<HTMLInputElement | null>(null)
@@ -48,9 +50,9 @@ export function Dropzone({ disabled, onFiles }: DropzoneProps) {
           disabled ? 'opacity-60' : '',
         ].join(' ')}
       >
-        <div className="text-base font-semibold">Drag & drop files here</div>
+        <div className="text-base font-semibold">{t('dropzone.title')}</div>
         <div className="text-sm text-slate-600 dark:text-slate-400">
-          Or choose files / a whole folder.
+          {t('dropzone.subtitle')}
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -60,7 +62,7 @@ export function Dropzone({ disabled, onFiles }: DropzoneProps) {
             disabled={disabled}
             onClick={() => fileInputRef.current?.click()}
           >
-            Add files
+            {t('actions.addFiles')}
           </button>
           <button
             type="button"
@@ -68,7 +70,7 @@ export function Dropzone({ disabled, onFiles }: DropzoneProps) {
             disabled={disabled}
             onClick={() => folderInputRef.current?.click()}
           >
-            Add folder
+            {t('actions.addFolder')}
           </button>
         </div>
 

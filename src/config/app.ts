@@ -8,7 +8,7 @@ export const DEFAULT_PREVIEW_MAX_CHARS = 200_000
 export const WORKSPACE_NAME_LIMIT = 60
 export const STORAGE_NAMESPACE = 'file-compiler'
 export const STORAGE_VERSION = 'v3'
-export const PREVIEW_TRUNCATION_SUFFIX = '\n\n... (preview truncated)'
+export const PREVIEW_TRUNCATION_SUFFIX = '\n\n...'
 
 export const DEFAULT_WORKSPACE_SETTINGS: WorkspaceSettings = {
   includeExts: [],

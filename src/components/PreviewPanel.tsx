@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
 import Editor from '@monaco-editor/react'
 import { PREVIEW_EDITOR_OPTIONS } from '../config/app'
+import { useI18n } from '../i18n/useI18n'
 import { countLines, resolvePreviewLanguage } from '../lib/merge'
 import type { PreviewPanelProps } from './types'
 
 export function PreviewPanel({ value, files }: PreviewPanelProps) {
+  const { t } = useI18n()
   const language = useMemo(() => resolvePreviewLanguage(files), [files])
   const lineCount = useMemo(() => countLines(value), [value])
 
@@ -13,20 +15,22 @@ export function PreviewPanel({ value, files }: PreviewPanelProps) {
       <div className="border-b border-[#3E3E42] px-6 py-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold text-[#D4D4D4]">Preview</h2>
+            <h2 className="text-sm font-semibold text-[#D4D4D4]">{t('preview.title')}</h2>
             <p className="mt-1 text-xs text-[#858585]">
               {language === 'plaintext'
-                ? 'Read-only merged output'
-                : `${language.charAt(0).toUpperCase() + language.slice(1)} - Read-only`}
+                ? t('preview.readonlyMerged')
+                : t('preview.readonlyLanguage', {
+                    language: language.charAt(0).toUpperCase() + language.slice(1),
+                  })}
             </p>
           </div>
           <div className="inline-flex items-center gap-3 rounded-lg border border-[#3E3E42] bg-[#2D2D30] px-3 py-1">
             <span className="text-xs font-medium text-[#CE9178]">
-              {lineCount.toLocaleString()} lines
+              {t('preview.lines', { count: lineCount.toLocaleString() })}
             </span>
             <span className="text-[#3E3E42]">/</span>
             <span className="text-xs font-medium text-[#9CDCFE]">
-              {value.length.toLocaleString()} chars
+              {t('preview.chars', { count: value.length.toLocaleString() })}
             </span>
           </div>
         </div>

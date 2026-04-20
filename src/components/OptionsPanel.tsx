@@ -1,25 +1,27 @@
 import { useState } from 'react'
+import { useI18n } from '../i18n/useI18n'
 import { normalizeExtensionListInput } from '../lib/settings'
 import type { OptionsPanelProps } from './types'
 
 export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
+  const { t } = useI18n()
   const [extDraft, setExtDraft] = useState(() => settings?.includeExts.join(', ') ?? '')
 
   if (!settings) {
     return (
       <div className="rounded-xl border border-slate-300 bg-white p-6 shadow dark:border-white/15 dark:bg-white/5">
-        <div className="text-sm text-slate-600 dark:text-slate-400">Loading options...</div>
+        <div className="text-sm text-slate-600 dark:text-slate-400">{t('options.loading')}</div>
       </div>
     )
   }
 
   return (
     <div className="rounded-xl border border-slate-300 bg-white p-6 shadow dark:border-white/15 dark:bg-white/5">
-      <h3 className="mb-6 text-base font-semibold">Merge Options</h3>
+      <h3 className="mb-6 text-base font-semibold">{t('options.title')}</h3>
 
       <div className="space-y-5">
         <label className="flex items-center justify-between gap-3">
-          <div className="text-sm text-slate-700 dark:text-slate-300">Include all extensions</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{t('options.includeAllExts')}</div>
           <input
             type="checkbox"
             checked={settings.includeAllExts}
@@ -29,10 +31,8 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
         </label>
 
         <label className="flex flex-col gap-2">
-          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Include extensions
-          </div>
-          <div className="text-xs text-slate-600 dark:text-slate-400">Comma/space separated</div>
+          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('options.includeExts')}</div>
+          <div className="text-xs text-slate-600 dark:text-slate-400">{t('options.commaSeparated')}</div>
           <input
             className="input"
             disabled={settings.includeAllExts}
@@ -44,7 +44,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
         </label>
 
         <label className="flex items-center justify-between gap-3">
-          <div className="text-sm text-slate-700 dark:text-slate-300">Smart separators</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{t('options.smartSeparators')}</div>
           <input
             type="checkbox"
             checked={settings.addSeparators}
@@ -54,9 +54,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
         </label>
 
         <label className="flex flex-col gap-2">
-          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Separator template
-          </div>
+          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('options.separatorTemplate')}</div>
           <input
             className="input"
             value={settings.separatorTemplate}
@@ -64,14 +62,12 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
             placeholder="// --- {{path}} ---"
           />
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            Tokens: {'{{path}}'}, {'{{name}}'}
+            {t('options.tokens')}
           </div>
         </label>
 
         <label className="flex flex-col gap-2">
-          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Output file name
-          </div>
+          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('options.outputName')}</div>
           <input
             className="input"
             value={settings.outputFileName}
@@ -80,7 +76,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
         </label>
 
         <label className="flex items-center justify-between gap-3">
-          <div className="text-sm text-slate-700 dark:text-slate-300">Download as ZIP</div>
+          <div className="text-sm text-slate-700 dark:text-slate-300">{t('options.downloadZip')}</div>
           <input
             type="checkbox"
             checked={settings.zipOutput}

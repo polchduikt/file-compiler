@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 html,
 body,
@@ -18,20 +19,16 @@ body {
     color-scheme: light;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-    }
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-200;
   }
 
-  @media (prefers-color-scheme: dark) {
-    body {
-      @apply bg-slate-950 text-slate-100;
-    }
+  html.dark body {
+    @apply bg-slate-950 text-slate-100;
   }
 }
 
@@ -40,60 +37,48 @@ body {
     @apply rounded-xl border border-slate-300 bg-white shadow;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .panel {
-      @apply border-white/15 bg-white/5;
-    }
+  .dark .panel {
+    @apply border-white/15 bg-white/5;
   }
 
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 disabled:pointer-events-none disabled:opacity-50;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .btn {
-      @apply border-white/10 bg-white/10 text-white hover:bg-white/15 focus-visible:ring-indigo-400/70;
-    }
+  .dark .btn {
+    @apply border-white/10 bg-white/10 text-white hover:bg-white/15 focus-visible:ring-indigo-400/70;
   }
 
   .btn-primary {
     @apply border-indigo-200 bg-indigo-600 text-white hover:bg-indigo-700;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .btn-primary {
-      @apply border-indigo-400/30 bg-indigo-500/90 hover:bg-indigo-500;
-    }
+  .dark .btn-primary {
+    @apply border-indigo-400/30 bg-indigo-500/90 hover:bg-indigo-500;
   }
 
   .btn-danger {
     @apply border-rose-200 bg-rose-600 text-white hover:bg-rose-700;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .btn-danger {
-      @apply border-rose-400/30 bg-rose-500/90 hover:bg-rose-500;
-    }
+  .dark .btn-danger {
+    @apply border-rose-400/30 bg-rose-500/90 hover:bg-rose-500;
   }
 
   .btn-success {
     @apply border-emerald-200 bg-emerald-600 text-white hover:bg-emerald-700;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .btn-success {
-      @apply border-emerald-400/30 bg-emerald-500/90 hover:bg-emerald-500;
-    }
+  .dark .btn-success {
+    @apply border-emerald-400/30 bg-emerald-500/90 hover:bg-emerald-500;
   }
 
   .input {
     @apply h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .input {
-      @apply border-white/10 bg-white/5 text-white placeholder:text-white/40 focus-visible:ring-indigo-400/70;
-    }
+  .dark .input {
+    @apply border-white/10 bg-white/5 text-white placeholder:text-white/40 focus-visible:ring-indigo-400/70;
   }
 
   select.input {
@@ -111,15 +96,13 @@ body {
     @apply border-slate-400;
   }
 
-  @media (prefers-color-scheme: dark) {
-    select.input {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23a78bfa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
-      @apply border-white/20;
-    }
+  .dark select.input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23a78bfa' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    @apply border-white/20;
+  }
 
-    select.input:hover {
-      @apply border-white/30;
-    }
+  .dark select.input:hover {
+    @apply border-white/30;
   }
 
   select.input option {
@@ -142,45 +125,71 @@ body {
     font-weight: 600;
   }
 
-  @media (prefers-color-scheme: dark) {
-    select.input option {
-      background-color: #1f2937;
-      color: #f3f4f6;
-      padding: 0.75rem;
-      margin: 0.25rem 0;
-    }
+  .dark select.input option {
+    background-color: #1f2937;
+    color: #f3f4f6;
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+  }
 
-    select.input option:hover {
-      background-color: #374151;
-      color: #f3f4f6;
-    }
+  .dark select.input option:hover {
+    background-color: #374151;
+    color: #f3f4f6;
+  }
 
-    select.input option:checked {
-      background: linear-gradient(#6366f1, #6366f1) !important;
-      background-color: #6366f1 !important;
-      color: white;
-      font-weight: 600;
-    }
+  .dark select.input option:checked {
+    background: linear-gradient(#6366f1, #6366f1) !important;
+    background-color: #6366f1 !important;
+    color: white;
+    font-weight: 600;
   }
 
   .chip {
     @apply inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-700;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .chip {
-      @apply border-white/10 bg-white/5 text-white/80;
-    }
+  .dark .chip {
+    @apply border-white/10 bg-white/5 text-white/80;
   }
 
   .kpi {
     @apply rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .kpi {
-      @apply border-white/10 bg-white/5;
-    }
+  .dark .kpi {
+    @apply border-white/10 bg-white/5;
+  }
+
+  .segmented-control {
+    @apply inline-flex items-center rounded-full border border-slate-300 bg-slate-100 p-1 shadow-inner;
+  }
+
+  .dark .segmented-control {
+    @apply border-white/15 bg-slate-900/70;
+  }
+
+  .segment {
+    @apply rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide text-slate-600 transition;
+  }
+
+  .segment:hover {
+    @apply text-slate-800;
+  }
+
+  .dark .segment {
+    @apply text-slate-300;
+  }
+
+  .dark .segment:hover {
+    @apply text-white;
+  }
+
+  .segment.is-active {
+    @apply bg-white text-indigo-700 shadow-sm;
+  }
+
+  .dark .segment.is-active {
+    @apply bg-indigo-500 text-white;
   }
 
   .monaco-editor {
