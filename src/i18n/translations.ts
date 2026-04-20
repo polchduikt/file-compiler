@@ -10,9 +10,9 @@ export const SUPPORTED_LOCALES = [
 
 export const translations = {
   en: {
-    'meta.title': 'File Compiler - Merge local files in your browser',
+    'meta.title': 'File Compiler - Merge Code Files, Copy, and Download',
     'meta.description':
-      'Merge local files into one clean output directly in your browser. No backend, no uploads.',
+      'Merge code and text files into one clean file in your browser. Copy instantly or download as TXT/ZIP.',
     'docs.metaDescription':
       'Step-by-step documentation for File Compiler features, workspaces, merge options, and output.',
     'app.title': 'File Compiler',
