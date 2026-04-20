@@ -25,6 +25,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
           <input
             type="checkbox"
             checked={settings.includeAllExts}
+            title={t('tooltip.includeAllExts')}
             onChange={(event) => void onChange({ includeAllExts: event.target.checked })}
             className="h-5 w-5"
           />
@@ -36,6 +37,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
           <input
             className="input"
             disabled={settings.includeAllExts}
+            title={t('tooltip.includeExts')}
             value={extDraft}
             onChange={(event) => setExtDraft(event.target.value)}
             onBlur={() => void onChange({ includeExts: normalizeExtensionListInput(extDraft) })}
@@ -48,6 +50,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
           <input
             type="checkbox"
             checked={settings.addSeparators}
+            title={t('tooltip.smartSeparators')}
             onChange={(event) => void onChange({ addSeparators: event.target.checked })}
             className="h-5 w-5"
           />
@@ -57,6 +60,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
           <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('options.separatorTemplate')}</div>
           <input
             className="input"
+            title={t('tooltip.separatorTemplate')}
             value={settings.separatorTemplate}
             onChange={(event) => void onChange({ separatorTemplate: event.target.value })}
             placeholder="// --- {{path}} ---"
@@ -70,6 +74,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
           <div className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('options.outputName')}</div>
           <input
             className="input"
+            title={t('tooltip.outputFileName')}
             value={settings.outputFileName}
             onChange={(event) => void onChange({ outputFileName: event.target.value })}
           />
@@ -80,6 +85,7 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
           <input
             type="checkbox"
             checked={settings.zipOutput}
+            title={t('tooltip.downloadZip')}
             onChange={(event) => void onChange({ zipOutput: event.target.checked })}
             className="h-5 w-5"
           />

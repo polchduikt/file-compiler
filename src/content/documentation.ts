@@ -22,6 +22,7 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         points: [
           'Use the workspace dropdown to switch between separate merge sessions.',
           'Click New to create another workspace and keep different tasks isolated.',
+          'Click Rename to change the current workspace name.',
           'Click Delete to remove the current workspace (the last workspace cannot be deleted).',
         ],
       },
@@ -59,10 +60,12 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         ],
       },
       {
-        title: '6. Language and Theme',
+        title: '6. Project Tree Selection',
         points: [
-          'Use ENG/UA in the top navigation to switch interface language.',
-          'Use Light/Dark to change visual theme instantly.',
+          'Click Project tree in the upload panel to open a modal file tree.',
+          'Expand folders and select only the files or folders you need.',
+          'Use Select all and Clear all for quick bulk selection.',
+          'Click Add selected files to import only chosen files into the workspace.',
         ],
       },
     ],
@@ -78,6 +81,7 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         points: [
           'Використовуйте список робочих просторів, щоб перемикатися між окремими сесіями.',
           'Кнопка Новий створює новий робочий простір для іншого завдання.',
+          'Кнопка Перейменувати змінює назву поточного робочого простору.',
           'Кнопка Видалити видаляє поточний простір (останній простір видалити не можна).',
         ],
       },
@@ -115,10 +119,12 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         ],
       },
       {
-        title: '6. Мова і тема',
+        title: '6. Вибір через дерево проєкту',
         points: [
-          'У верхньому меню ENG/UA перемикає мову інтерфейсу.',
-          'Світла/Темна миттєво перемикає тему оформлення.',
+          'Натисніть Дерево проєкту в панелі завантаження, щоб відкрити модальне дерево файлів.',
+          'Розгортайте папки та обирайте тільки потрібні файли або цілі папки.',
+          'Кнопки Обрати все та Очистити вибір прискорюють масовий вибір.',
+          'Натисніть Додати вибрані файли, щоб імпортувати лише вибрані елементи в робочий простір.',
         ],
       },
     ],

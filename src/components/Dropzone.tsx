@@ -3,15 +3,21 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n/useI18n'
 import type { DropzoneProps } from './types'
 
-export function Dropzone({ disabled, onFiles }: DropzoneProps) {
+export function Dropzone({ disabled, onFiles, onOpenProjectTree }: DropzoneProps) {
   const { t } = useI18n()
   const [isOver, setIsOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const folderInputRef = useRef<HTMLInputElement | null>(null)
+  const projectTreeInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     if (!folderInputRef.current) return
     folderInputRef.current.setAttribute('webkitdirectory', '')
+  }, [])
+
+  useEffect(() => {
+    if (!projectTreeInputRef.current) return
+    projectTreeInputRef.current.setAttribute('webkitdirectory', '')
   }, [])
 
   const onDrop = useCallback(
@@ -60,6 +66,7 @@ export function Dropzone({ disabled, onFiles }: DropzoneProps) {
             type="button"
             className="btn btn-primary"
             disabled={disabled}
+            title={t('tooltip.addFiles')}
             onClick={() => fileInputRef.current?.click()}
           >
             {t('actions.addFiles')}
@@ -68,9 +75,19 @@ export function Dropzone({ disabled, onFiles }: DropzoneProps) {
             type="button"
             className="btn"
             disabled={disabled}
+            title={t('tooltip.addFolder')}
             onClick={() => folderInputRef.current?.click()}
           >
             {t('actions.addFolder')}
+          </button>
+          <button
+            type="button"
+            className="btn"
+            disabled={disabled || !onOpenProjectTree}
+            title={t('tooltip.openProjectTree')}
+            onClick={() => projectTreeInputRef.current?.click()}
+          >
+            {t('actions.projectTree')}
           </button>
         </div>
 
@@ -91,6 +108,18 @@ export function Dropzone({ disabled, onFiles }: DropzoneProps) {
           className="hidden"
           onChange={(event) => {
             if (event.target.files?.length) void onFiles(event.target.files)
+            event.target.value = ''
+          }}
+        />
+        <input
+          ref={projectTreeInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={(event) => {
+            if (event.target.files?.length && onOpenProjectTree) {
+              void onOpenProjectTree(Array.from(event.target.files))
+            }
             event.target.value = ''
           }}
         />

@@ -27,6 +27,7 @@ export function FileList({ files, onClear, onRemove }: FileListProps) {
             type="button"
             className="btn"
             disabled={files.length === 0}
+            title={t('tooltip.clearFiles')}
             onClick={() => void onClear()}
           >
             {t('actions.clear')}
@@ -58,6 +59,7 @@ export function FileList({ files, onClear, onRemove }: FileListProps) {
                   <button
                     type="button"
                     className="btn btn-danger shrink-0"
+                    title={`${t('tooltip.removeFile')}: ${file.path}`}
                     onClick={() => void onRemove(file.id)}
                   >
                     {t('actions.remove')}

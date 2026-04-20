@@ -4,6 +4,8 @@ import { DocumentationPage } from './components/DocumentationPage'
 import { FileList } from './components/FileList'
 import { OptionsPanel } from './components/OptionsPanel'
 import { PreviewPanel } from './components/PreviewPanel'
+import { ProjectTreeModal } from './components/ProjectTreeModal'
+import { RenameWorkspaceModal } from './components/RenameWorkspaceModal'
 import { useMergeResult } from './hooks/useMergeResult'
 import { useI18n } from './i18n/useI18n'
 import { downloadTextAsFile, downloadTextAsZip } from './lib/download'
@@ -48,6 +50,7 @@ function App() {
   const workspaces = useWorkspaceStore((state) => state.workspaces)
   const setActiveWorkspaceId = useWorkspaceStore((state) => state.setActiveWorkspaceId)
   const createWorkspace = useWorkspaceStore((state) => state.createWorkspace)
+  const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace)
   const deleteWorkspace = useWorkspaceStore((state) => state.deleteWorkspace)
   const ensureWorkspaceLoaded = useWorkspaceStore((state) => state.ensureWorkspaceLoaded)
   const workspace = useWorkspaceStore((state) =>
@@ -62,6 +65,8 @@ function App() {
   const [copied, setCopied] = useState(false)
   const [theme, setTheme] = useState<Theme>(() => detectTheme())
   const [activePage, setActivePage] = useState<Page>(() => detectPageFromHash())
+  const [projectTreeFiles, setProjectTreeFiles] = useState<File[] | null>(null)
+  const [renameWorkspaceId, setRenameWorkspaceId] = useState<string | null>(null)
   const { mergeError, mergeResult } = useMergeResult(workspace)
 
   useEffect(() => {
@@ -156,6 +161,17 @@ function App() {
     await deleteWorkspace(workspaceId)
   }
 
+  const handleOpenRenameWorkspace = () => {
+    if (!workspaceId) return
+    setRenameWorkspaceId(workspaceId)
+  }
+
+  const handleConfirmRenameWorkspace = async (name: string) => {
+    if (!renameWorkspaceId) return
+    await renameWorkspace(renameWorkspaceId, name)
+    setRenameWorkspaceId(null)
+  }
+
   const handleDownload = async () => {
     if (!workspace || !mergeResult?.mergedText) return
 
@@ -170,6 +186,30 @@ function App() {
     }
 
     await downloadTextAsFile(mergeResult.mergedText, plan.filename)
+  }
+
+  const handleOpenProjectTree = (files: File[]) => {
+    setProjectTreeFiles(files)
+  }
+
+  const handleConfirmProjectTree = async (selectedFiles: File[]) => {
+    if (!workspaceId || selectedFiles.length === 0) {
+      setProjectTreeFiles(null)
+      return
+    }
+
+    setIngestError(null)
+    const { accepted, rejected } = await ingestFiles(selectedFiles)
+    if (rejected.length > 0) {
+      setIngestError(
+        t('workspace.rejected', {
+          count: rejected.length,
+          name: rejected[0]?.name ?? '',
+        }),
+      )
+    }
+    await upsertFiles(workspaceId, accepted)
+    setProjectTreeFiles(null)
   }
 
   const handleNavigatePage = (nextPage: Page) => {
@@ -201,6 +241,7 @@ function App() {
               <button
                 type="button"
                 className="text-lg font-bold tracking-tight hover:text-indigo-300"
+                title={t('tooltip.navHome')}
                 onClick={() => handleNavigatePage('app')}
               >
                 {t('app.title')}
@@ -209,6 +250,7 @@ function App() {
                 <button
                   type="button"
                   className={activePage === 'docs' ? 'btn btn-primary h-9 px-3' : 'btn h-9 px-3'}
+                  title={t('tooltip.navDocs')}
                   onClick={() => handleNavigatePage('docs')}
                 >
                   {t('nav.documentation')}
@@ -222,6 +264,7 @@ function App() {
               <button
                 type="button"
                 className={locale === 'en' ? 'segment is-active' : 'segment'}
+                title={t('tooltip.langEn')}
                 onClick={() => setLocale('en')}
               >
                 {t('language.short.en')}
@@ -229,6 +272,7 @@ function App() {
               <button
                 type="button"
                 className={locale === 'uk' ? 'segment is-active' : 'segment'}
+                title={t('tooltip.langUk')}
                 onClick={() => setLocale('uk')}
               >
                 {t('language.short.uk')}
@@ -239,6 +283,7 @@ function App() {
               <button
                 type="button"
                 className={theme === 'light' ? 'segment is-active' : 'segment'}
+                title={t('tooltip.themeLight')}
                 onClick={() => setTheme('light')}
               >
                 {t('theme.light')}
@@ -246,6 +291,7 @@ function App() {
               <button
                 type="button"
                 className={theme === 'dark' ? 'segment is-active' : 'segment'}
+                title={t('tooltip.themeDark')}
                 onClick={() => setTheme('dark')}
               >
                 {t('theme.dark')}
@@ -264,6 +310,7 @@ function App() {
           <aside className="flex w-80 flex-col gap-6 overflow-y-auto">
             <Dropzone
               disabled={!hydrated || !workspaceId}
+              onOpenProjectTree={handleOpenProjectTree}
               onFiles={async (files) => {
                 if (!workspaceId) return
                 setIngestError(null)
@@ -303,6 +350,7 @@ function App() {
                   <select
                     className="input w-44"
                     disabled={!hydrated || workspaces.length === 0}
+                    title={t('tooltip.workspaceSelect')}
                     value={workspaceId ?? ''}
                     onChange={async (event) => {
                       const id = event.target.value
@@ -321,9 +369,20 @@ function App() {
                     type="button"
                     className="btn btn-primary shrink-0"
                     disabled={!hydrated}
+                    title={t('tooltip.newWorkspace')}
                     onClick={() => void handleCreateWorkspace()}
                   >
                     {t('actions.new')}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn shrink-0"
+                    disabled={!hydrated || !workspaceId}
+                    title={t('tooltip.renameWorkspace')}
+                    onClick={handleOpenRenameWorkspace}
+                  >
+                    {t('actions.rename')}
                   </button>
 
                   <button
@@ -333,7 +392,7 @@ function App() {
                     title={
                       workspaces.length <= 1
                         ? t('workspace.delete.disabled')
-                        : t('workspace.delete.enabled')
+                        : t('tooltip.deleteWorkspace')
                     }
                     onClick={() => void handleDeleteWorkspace()}
                   >
@@ -347,7 +406,7 @@ function App() {
                     className="btn btn-success"
                     disabled={!previewValue}
                     onClick={() => void handleCopy()}
-                    title={t('actions.copyTitle')}
+                    title={t('tooltip.copyOutput')}
                   >
                     {copied ? t('actions.copied') : t('actions.copy')}
                   </button>
@@ -356,6 +415,7 @@ function App() {
                     type="button"
                     className="btn btn-primary"
                     disabled={!workspace?.settings.outputFileName || !mergeResult?.mergedText}
+                    title={t('tooltip.downloadOutput')}
                     onClick={() => void handleDownload()}
                   >
                     {t('actions.download')}
@@ -387,6 +447,22 @@ function App() {
           </main>
         </div>
       )}
+
+      {projectTreeFiles ? (
+        <ProjectTreeModal
+          files={projectTreeFiles}
+          onCancel={() => setProjectTreeFiles(null)}
+          onConfirm={handleConfirmProjectTree}
+        />
+      ) : null}
+
+      {renameWorkspaceId ? (
+        <RenameWorkspaceModal
+          initialName={workspaces.find((item) => item.id === renameWorkspaceId)?.name ?? ''}
+          onCancel={() => setRenameWorkspaceId(null)}
+          onSave={handleConfirmRenameWorkspace}
+        />
+      ) : null}
     </div>
   )
 }

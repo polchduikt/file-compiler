@@ -3,6 +3,7 @@ import type { VfsFile, WorkspaceSettings } from '../types'
 export type DropzoneProps = {
   disabled?: boolean
   onFiles: (files: FileList | File[]) => void | Promise<void>
+  onOpenProjectTree?: (files: File[]) => void | Promise<void>
 }
 
 export type FileListProps = {
