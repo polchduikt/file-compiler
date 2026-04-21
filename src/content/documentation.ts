@@ -15,7 +15,7 @@ type DocumentationContent = {
 const documentationByLocale: Record<Locale, DocumentationContent> = {
   en: {
     title: 'Documentation',
-    subtitle: 'How to use File Compiler quickly and correctly.',
+    subtitle: 'How to use Files To Context quickly and correctly.',
     sections: [
       {
         title: '1. Workspaces',
@@ -78,7 +78,7 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
   },
   uk: {
     title: 'Документація',
-    subtitle: 'Як швидко та правильно користуватися File Compiler.',
+    subtitle: 'Як швидко та правильно користуватися Files To Context.',
     sections: [
       {
         title: '1. Робочі простори',

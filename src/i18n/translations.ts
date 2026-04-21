@@ -10,12 +10,12 @@ export const SUPPORTED_LOCALES = [
 
 export const translations = {
   en: {
-    'meta.title': 'File Compiler - Merge Code Files, Copy, and Download',
+    'meta.title': 'Files To Context - Merge Files into AI-Ready Context',
     'meta.description':
-      'Merge code and text files into one clean file in your browser. Copy instantly or download as TXT/ZIP.',
+      'Collect many code and text files into one AI-ready context in your browser. Organize by workspace, copy instantly, or download as TXT/ZIP.',
     'docs.metaDescription':
-      'Step-by-step documentation for File Compiler features, workspaces, merge options, and output.',
-    'app.title': 'File Compiler',
+      'Documentation for Files To Context: workspaces, project tree, presets, and exporting AI-ready context.',
+    'app.title': 'Files To Context',
     'nav.app': 'App',
     'nav.documentation': 'Documentation',
     'workspace.defaultPrefix': 'Workspace',
@@ -131,12 +131,12 @@ export const translations = {
     'errors.mergeWorkerUnavailable': 'Merge worker is not available',
   },
   uk: {
-    'meta.title': 'File Compiler - Обʼєднання локальних файлів у браузері',
+    'meta.title': 'Files To Context - Обʼєднуйте файли в AI-контекст',
     'meta.description':
-      'Обʼєднуйте локальні файли в один результат прямо у браузері. Без бекенду і без завантажень на сервер.',
+      'Збирайте багато кодових і текстових файлів в один AI-контекст прямо у браузері. Керуйте робочими просторами, копіюйте результат або завантажуйте TXT/ZIP.',
     'docs.metaDescription':
-      'Коротка інструкція зі всіма функціями File Compiler: воркспейси, опції обʼєднання та результат.',
-    'app.title': 'File Compiler',
+      'Документація Files To Context: робочі простори, дерево проєкту, пресети та експорт AI-контексту.',
+    'app.title': 'Files To Context',
     'nav.app': 'Застосунок',
     'nav.documentation': 'Документація',
     'workspace.defaultPrefix': 'Робочий простір',

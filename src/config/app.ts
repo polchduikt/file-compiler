@@ -1,6 +1,6 @@
 import type { WorkspaceSettings } from '../types'
 
-export const APP_NAME = 'File Compiler'
+export const APP_NAME = 'Files To Context'
 export const DEFAULT_WORKSPACE_NAME = 'Workspace 1'
 export const WORKSPACE_NAME_PREFIX = 'Workspace'
 export const DEFAULT_OUTPUT_FILE_NAME = 'merged.txt'

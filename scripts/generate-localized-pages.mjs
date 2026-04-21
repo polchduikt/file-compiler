@@ -10,12 +10,12 @@ const variants = [
     lang: 'en',
     localeTag: 'en_US',
     alternateLocaleTag: 'uk_UA',
-    title: 'File Compiler - Merge Code Files, Copy, and Download',
+    title: 'Files To Context - Merge Files into AI-Ready Context',
     description:
-      'Merge code and text files into one clean file in your browser. Copy instantly or download as TXT/ZIP.',
-    ogTitle: 'File Compiler - Merge, Copy, and Download Combined Files',
+      'Collect many code and text files into one AI-ready context in your browser. Organize by workspace, copy instantly, or download as TXT/ZIP.',
+    ogTitle: 'Files To Context - Build AI-Ready Context from Your Files',
     ogDescription:
-      'Combine project files into one clean output in-browser. Copy instantly or download as TXT/ZIP. No backend uploads.',
+      'Collect many project files into one clean AI-ready context in-browser. Fast copy/download, no backend uploads.',
     canonical: 'https://file-compiler.techindustry.app/en',
     alternates: {
       en: 'https://file-compiler.techindustry.app/en',
@@ -28,12 +28,12 @@ const variants = [
     lang: 'uk',
     localeTag: 'uk_UA',
     alternateLocaleTag: 'en_US',
-    title: 'File Compiler - Об’єднання локальних файлів у браузері',
+    title: 'Files To Context - Обʼєднуйте файли в AI-контекст',
     description:
-      'Об’єднуйте локальні кодові й текстові файли в один результат прямо у браузері. Без бекенду та без завантаження на сервер.',
-    ogTitle: 'File Compiler - Об’єднуйте, копіюйте та завантажуйте файли',
+      'Збирайте багато кодових і текстових файлів в один AI-контекст прямо у браузері. Керуйте робочими просторами, копіюйте результат або завантажуйте TXT/ZIP.',
+    ogTitle: 'Files To Context - Збирайте контекст для нейромереж',
     ogDescription:
-      'Об’єднуйте файли проєкту в один чистий результат у браузері. Копіюйте миттєво або завантажуйте як TXT/ZIP.',
+      'Обʼєднуйте файли проєкту в один чистий AI-контекст у браузері. Швидке копіювання та завантаження без бекенду.',
     canonical: 'https://file-compiler.techindustry.app/uk',
     alternates: {
       en: 'https://file-compiler.techindustry.app/en',
@@ -46,12 +46,12 @@ const variants = [
     lang: 'en',
     localeTag: 'en_US',
     alternateLocaleTag: 'uk_UA',
-    title: 'Documentation - File Compiler',
+    title: 'Documentation - Files To Context',
     description:
-      'Step-by-step documentation for File Compiler features, workspaces, merge options, and output.',
-    ogTitle: 'File Compiler Documentation',
+      'Documentation for Files To Context: workspaces, project tree, presets, and exporting AI-ready context.',
+    ogTitle: 'Files To Context Documentation',
     ogDescription:
-      'Learn how to use workspaces, merge options, project tree selection, and output actions in File Compiler.',
+      'Learn how to use workspaces, merge presets, project tree selection, and output actions in Files To Context.',
     canonical: 'https://file-compiler.techindustry.app/en/docs',
     alternates: {
       en: 'https://file-compiler.techindustry.app/en/docs',
@@ -64,12 +64,12 @@ const variants = [
     lang: 'uk',
     localeTag: 'uk_UA',
     alternateLocaleTag: 'en_US',
-    title: 'Документація - File Compiler',
+    title: 'Документація - Files To Context',
     description:
-      'Коротка інструкція зі всіма функціями File Compiler: робочі простори, параметри об’єднання та результат.',
-    ogTitle: 'Документація File Compiler',
+      'Документація Files To Context: робочі простори, дерево проєкту, пресети та експорт AI-контексту.',
+    ogTitle: 'Документація Files To Context',
     ogDescription:
-      'Дізнайтесь, як працювати з робочими просторами, деревом проєкту, параметрами об’єднання та завантаженням результату.',
+      'Дізнайтесь, як працювати з робочими просторами, деревом проєкту, пресетами та вивантаженням AI-контексту.',
     canonical: 'https://file-compiler.techindustry.app/uk/docs',
     alternates: {
       en: 'https://file-compiler.techindustry.app/en/docs',

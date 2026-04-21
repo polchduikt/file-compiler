@@ -29,7 +29,7 @@ export function AppHeader({
           <div className="flex items-center gap-3">
             <img
               src="./logo.png"
-              alt="File Compiler logo"
+              alt="Files To Context logo"
               className="h-10 w-10 shrink-0 object-contain"
             />
             <button

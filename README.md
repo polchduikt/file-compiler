@@ -1,6 +1,6 @@
-# File Compiler
+# Files To Context
 
-File Compiler is a browser-only web app for merging local project files into one clean output.  
+Files To Context is a browser-only web app for collecting many local project files into one AI-ready context.  
 You can copy the merged result or download it as `.txt` / `.zip` without uploading source files to any backend.
 
 ## Overview
