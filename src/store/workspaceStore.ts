@@ -3,6 +3,7 @@ import { DEFAULT_WORKSPACE_NAME } from '../config/app'
 import { mergeFilesByPath } from '../lib/file-system'
 import { createId } from '../lib/id'
 import { storage, STORAGE_KEYS } from '../lib/storage'
+import { parseWorkspaceBackup } from '../lib/workspace-backup'
 import {
   createWorkspaceRecord,
   createWorkspaceSummary,
@@ -29,6 +30,7 @@ type WorkspaceState = {
   removeFile: (workspaceId: string, fileId: string) => Promise<void>
   clearFiles: (workspaceId: string) => Promise<void>
   updateSettings: (workspaceId: string, patch: Partial<Workspace['settings']>) => Promise<void>
+  importWorkspaceBackup: (backupJson: string) => Promise<string>
 }
 
 async function saveWorkspaceIndex(index: WorkspaceSummary[]) {
@@ -325,5 +327,40 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
 
     await saveWorkspace(workspace)
     await saveWorkspaceIndex(nextIndex)
+  },
+
+  importWorkspaceBackup: async (backupJson) => {
+    const payload = parseWorkspaceBackup(backupJson)
+    const id = createId('ws')
+    const sanitizedName = sanitizeWorkspaceName(payload.name, getNextWorkspaceName(get().workspaces))
+    const uniqueName = makeUniqueWorkspaceName(sanitizedName, get().workspaces)
+    const now = Date.now()
+
+    const workspace: Workspace = {
+      id,
+      name: uniqueName,
+      createdAt: now,
+      updatedAt: now,
+      files: payload.files,
+      settings: normalizeWorkspaceSettings(createWorkspaceRecord(id).settings, payload.settings),
+    }
+
+    const nextIndex = sortWorkspaceSummaries([
+      createWorkspaceSummary(workspace),
+      ...get().workspaces.filter((item) => item.id !== id),
+    ])
+
+    set((state) => ({
+      activeWorkspaceId: id,
+      workspaceById: {
+        ...state.workspaceById,
+        [id]: workspace,
+      },
+      workspaces: nextIndex,
+    }))
+
+    await saveWorkspace(workspace)
+    await saveWorkspaceIndex(nextIndex)
+    return id
   },
 }))

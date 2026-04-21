@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useI18n } from '../i18n/useI18n'
+import { getPresetById, MERGE_PRESETS, resolvePresetId, type MergePresetId } from '../lib/presets'
 import { normalizeExtensionListInput } from '../lib/settings'
 import type { OptionsPanelProps } from './types'
 
@@ -15,6 +16,8 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
     )
   }
 
+  const presetId = resolvePresetId(settings)
+
   return (
     <div className="rounded-xl border border-slate-300 bg-white p-6 shadow dark:border-white/15 dark:bg-white/5">
       <h3 className="mb-6 text-base font-semibold">{t('options.title')}</h3>
@@ -29,6 +32,33 @@ export function OptionsPanel({ settings, onChange }: OptionsPanelProps) {
             onChange={(event) => void onChange({ includeAllExts: event.target.checked })}
             className="h-5 w-5"
           />
+        </label>
+
+        <label className="flex flex-col gap-2">
+          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            {t('options.presets')}
+          </div>
+          <select
+            className="input"
+            title={t('tooltip.presetSelect')}
+            value={presetId}
+            onChange={(event) => {
+              const nextPresetId = event.target.value as MergePresetId | 'custom'
+              if (nextPresetId === 'custom') return
+
+              const preset = getPresetById(nextPresetId)
+              if (!preset) return
+              setExtDraft((preset.settingsPatch.includeExts ?? []).join(', '))
+              void onChange(preset.settingsPatch)
+            }}
+          >
+            <option value="custom">{t('options.presetCustom')}</option>
+            {MERGE_PRESETS.map((preset) => (
+              <option key={preset.id} value={preset.id}>
+                {preset.label}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className="flex flex-col gap-2">

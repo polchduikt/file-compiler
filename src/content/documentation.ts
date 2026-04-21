@@ -21,9 +21,11 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         title: '1. Workspaces',
         points: [
           'Use the workspace dropdown to switch between separate merge sessions.',
-          'Click New to create another workspace and keep different tasks isolated.',
+          'Click New to create another workspace and keep tasks isolated.',
           'Click Rename to change the current workspace name.',
           'Click Delete to remove the current workspace (the last workspace cannot be deleted).',
+          'Use Export to save the active workspace as a JSON backup.',
+          'Use Import to restore a workspace backup and continue in a new workspace.',
         ],
       },
       {
@@ -35,12 +37,13 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         ],
       },
       {
-        title: '3. Merge Options',
+        title: '3. Merge Options and Presets',
         points: [
+          'Use Presets to apply stack-specific merge options in one click (Java, JS/TS, React, Node.js, Python, C#, PHP, Go, Rust, Kotlin, Swift, Ruby, DevOps, Docs).',
           'Include all extensions merges every text file type.',
           'Include extensions lets you whitelist specific extensions such as .ts, .js, .md.',
           'Smart separators and Separator template control how file boundaries are marked.',
-          'Output file name and Download as ZIP define the exported result format.',
+          'Output file name and Download as ZIP define the exported format.',
         ],
       },
       {
@@ -63,43 +66,47 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         title: '6. Project Tree Selection',
         points: [
           'Click Project tree in the upload panel to open a modal file tree.',
+          'Use the search field to filter files/folders by name.',
           'Expand folders and select only the files or folders you need.',
-          'Use Select all and Clear all for quick bulk selection.',
+          'Use Select all and Clear all in one row for fast bulk actions.',
           'Click Add selected files to import only chosen files into the workspace.',
         ],
       },
     ],
     footer:
-      'Tip: Create one workspace per project or feature branch to keep context clean and reusable.',
+      'Tip: Create one workspace per project or feature branch and keep JSON backups for reusable contexts.',
   },
   uk: {
     title: 'Документація',
-    subtitle: 'Як швидко і правильно користуватися File Compiler.',
+    subtitle: 'Як швидко та правильно користуватися File Compiler.',
     sections: [
       {
         title: '1. Робочі простори',
         points: [
-          'Використовуйте список робочих просторів, щоб перемикатися між окремими сесіями.',
+          'Використовуйте список робочих просторів, щоб перемикатися між окремими сесіями обʼєднання.',
           'Кнопка Новий створює новий робочий простір для іншого завдання.',
           'Кнопка Перейменувати змінює назву поточного робочого простору.',
           'Кнопка Видалити видаляє поточний простір (останній простір видалити не можна).',
+          'Кнопка Експорт зберігає активний робочий простір у JSON-бекап.',
+          'Кнопка Імпорт відновлює бекап у новий робочий простір.',
         ],
       },
       {
         title: '2. Додавання файлів',
         points: [
           'Перетягніть файли в dropzone або натисніть Додати файли.',
-          'Кнопка Додати папку додає одразу всю структуру папки.',
+          'Кнопка Додати папку додає всю структуру папки з пристрою.',
           'Усі файли обробляються локально в браузері без відправки на сервер.',
         ],
       },
       {
-        title: '3. Параметри обʼєднання',
+        title: '3. Параметри обʼєднання і пресети',
         points: [
+          'Пресети дозволяють одним кліком застосувати налаштування під популярні стеки (Java, JS/TS, React, Node.js, Python, C#, PHP, Go, Rust, Kotlin, Swift, Ruby, DevOps, Docs).',
           'Включати всі розширення обʼєднує всі текстові типи файлів.',
           'Включати розширення дозволяє залишити лише вибрані типи (.ts, .js, .md тощо).',
-          'Розумні розділювачі і Шаблон розділювача керують межами між файлами.',
-          'Назва вихідного файлу і Завантажити як ZIP визначають формат експорту.',
+          'Розумні розділювачі та Шаблон розділювача керують межами між файлами.',
+          'Назва вихідного файлу та Завантажити як ZIP визначають формат експорту.',
         ],
       },
       {
@@ -122,14 +129,15 @@ const documentationByLocale: Record<Locale, DocumentationContent> = {
         title: '6. Вибір через дерево проєкту',
         points: [
           'Натисніть Дерево проєкту в панелі завантаження, щоб відкрити модальне дерево файлів.',
+          'Використовуйте поле пошуку, щоб фільтрувати файли/папки за назвою.',
           'Розгортайте папки та обирайте тільки потрібні файли або цілі папки.',
-          'Кнопки Обрати все та Очистити вибір прискорюють масовий вибір.',
+          'Кнопки Обрати все та Очистити вибір розташовані в один ряд для швидкої масової дії.',
           'Натисніть Додати вибрані файли, щоб імпортувати лише вибрані елементи в робочий простір.',
         ],
       },
     ],
     footer:
-      'Порада: робіть окремий робочий простір під кожен проєкт або фічу, щоб контекст був чистим.',
+      'Порада: робіть окремий робочий простір під кожен проєкт або фічу та зберігайте JSON-бекапи для швидкого відновлення.',
   },
 }
 

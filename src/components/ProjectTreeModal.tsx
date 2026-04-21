@@ -42,6 +42,28 @@ function collectExpandedDirectoryIds(root: FolderTreeNode) {
   return expanded
 }
 
+function filterTreeByQuery(node: FolderTreeNode, query: string): FolderTreeNode | null {
+  if (!query.trim()) return node
+  const normalizedQuery = query.trim().toLowerCase()
+
+  if (node.kind === 'file') {
+    return node.name.toLowerCase().includes(normalizedQuery) ? node : null
+  }
+
+  const filteredChildren = node.children
+    .map((child) => filterTreeByQuery(child, normalizedQuery))
+    .filter((child): child is FolderTreeNode => Boolean(child))
+
+  if (node.name.toLowerCase().includes(normalizedQuery) || filteredChildren.length > 0) {
+    return {
+      ...node,
+      children: filteredChildren,
+    }
+  }
+
+  return null
+}
+
 export function ProjectTreeModal({ files, onCancel, onConfirm }: ProjectTreeModalProps) {
   const { t } = useI18n()
   const { entries, root } = useMemo(() => createFolderTree(files), [files])
@@ -49,8 +71,20 @@ export function ProjectTreeModal({ files, onCancel, onConfirm }: ProjectTreeModa
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(allFileIds))
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => collectExpandedDirectoryIds(root))
   const [submitting, setSubmitting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const filesById = new Map(entries.map((entry) => [entry.id, entry.file]))
+  const filteredRoot = useMemo(() => {
+    return filterTreeByQuery(root, searchQuery) ?? {
+      ...root,
+      children: [],
+    }
+  }, [root, searchQuery])
+  const visibleFileIds = useMemo(() => collectFileIds(filteredRoot), [filteredRoot])
+  const effectiveExpandedIds = useMemo(() => {
+    if (!searchQuery.trim()) return expandedIds
+    return collectExpandedDirectoryIds(filteredRoot)
+  }, [expandedIds, filteredRoot, searchQuery])
 
   const toggleNodeSelection = (node: FolderTreeNode) => {
     const nodeFileIds = collectFileIds(node)
@@ -120,7 +154,7 @@ export function ProjectTreeModal({ files, onCancel, onConfirm }: ProjectTreeModa
       )
     }
 
-    const isExpanded = expandedIds.has(node.id)
+    const isExpanded = effectiveExpandedIds.has(node.id)
     const checkState = resolveCheckState(node, selectedIds)
 
     return (
@@ -176,19 +210,42 @@ export function ProjectTreeModal({ files, onCancel, onConfirm }: ProjectTreeModa
             <div className="flex items-center justify-between border-b border-slate-300 px-4 py-3 dark:border-white/10">
               <h3 className="text-sm font-semibold">{t('tree.projectFiles')}</h3>
               <div className="flex items-center gap-2">
+                <input
+                  className="input h-8 w-56 sm:w-72"
+                  value={searchQuery}
+                  placeholder={t('tree.searchPlaceholder')}
+                  title={t('tooltip.treeSearch')}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
                 <button
                   type="button"
-                  className="btn h-8 px-3 py-1"
+                  className="btn h-8 min-w-[128px] whitespace-nowrap px-4 py-1"
                   title={t('tooltip.treeSelectAll')}
-                  onClick={() => setSelectedIds(new Set(allFileIds))}
+                  onClick={() =>
+                    setSelectedIds((previous) => {
+                      const next = new Set(previous)
+                      for (const id of visibleFileIds) {
+                        next.add(id)
+                      }
+                      return next
+                    })
+                  }
                 >
                   {t('tree.selectAll')}
                 </button>
                 <button
                   type="button"
-                  className="btn h-8 px-3 py-1"
+                  className="btn h-8 min-w-[128px] whitespace-nowrap px-4 py-1"
                   title={t('tooltip.treeClearAll')}
-                  onClick={() => setSelectedIds(new Set())}
+                  onClick={() =>
+                    setSelectedIds((previous) => {
+                      const next = new Set(previous)
+                      for (const id of visibleFileIds) {
+                        next.delete(id)
+                      }
+                      return next
+                    })
+                  }
                 >
                   {t('tree.clearAll')}
                 </button>
@@ -196,12 +253,12 @@ export function ProjectTreeModal({ files, onCancel, onConfirm }: ProjectTreeModa
             </div>
 
             <div className="min-h-0 flex-1 overflow-auto p-2">
-              {root.children.length === 0 ? (
+              {filteredRoot.children.length === 0 ? (
                 <div className="p-4 text-sm text-slate-600 dark:text-slate-300">
                   {t('tree.empty')}
                 </div>
               ) : (
-                <ul>{root.children.map((node) => renderNode(node, 0))}</ul>
+                <ul>{filteredRoot.children.map((node) => renderNode(node, 0))}</ul>
               )}
             </div>
           </section>

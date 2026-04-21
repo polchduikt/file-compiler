@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { Dropzone } from './components/Dropzone'
 import { DocumentationPage } from './components/DocumentationPage'
 import { FileList } from './components/FileList'
@@ -12,6 +12,7 @@ import { downloadTextAsFile, downloadTextAsZip } from './lib/download'
 import { ingestFiles } from './lib/ingest'
 import { resolveDownloadPlan, resolvePreviewValue } from './lib/merge'
 import { appPathToBrowserPath, buildLocalizedPath, resolveRoute, type AppPage } from './lib/routing'
+import { buildWorkspaceBackupFilename, serializeWorkspaceBackup } from './lib/workspace-backup'
 import { getNextWorkspaceName } from './lib/workspace'
 import { useWorkspaceStore } from './store/workspaceStore'
 import type { Locale } from './i18n/translations'
@@ -57,6 +58,7 @@ function App() {
   const removeFile = useWorkspaceStore((state) => state.removeFile)
   const clearFiles = useWorkspaceStore((state) => state.clearFiles)
   const updateSettings = useWorkspaceStore((state) => state.updateSettings)
+  const importWorkspaceBackup = useWorkspaceStore((state) => state.importWorkspaceBackup)
 
   const [ingestError, setIngestError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -64,6 +66,7 @@ function App() {
   const [activePage, setActivePage] = useState<AppPage>('app')
   const [projectTreeFiles, setProjectTreeFiles] = useState<File[] | null>(null)
   const [renameWorkspaceId, setRenameWorkspaceId] = useState<string | null>(null)
+  const importInputRef = useRef<HTMLInputElement | null>(null)
   const { mergeError, mergeResult } = useMergeResult(workspace)
 
   useEffect(() => {
@@ -208,6 +211,30 @@ function App() {
     }
 
     await downloadTextAsFile(mergeResult.mergedText, plan.filename)
+  }
+
+  const handleExportWorkspace = async () => {
+    if (!workspace) return
+
+    const backupJson = serializeWorkspaceBackup(workspace)
+    await downloadTextAsFile(backupJson, buildWorkspaceBackupFilename(workspace.name))
+  }
+
+  const handleImportWorkspace = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    try {
+      const backupJson = await file.text()
+      const importedWorkspaceId = await importWorkspaceBackup(backupJson)
+      setActiveWorkspaceId(importedWorkspaceId)
+      await ensureWorkspaceLoaded(importedWorkspaceId)
+      setIngestError(null)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      setIngestError(t('workspace.import.failed', { message }))
+    }
   }
 
   const handleOpenProjectTree = (files: File[]) => {
@@ -424,6 +451,34 @@ function App() {
                   >
                     {t('actions.delete')}
                   </button>
+
+                  <button
+                    type="button"
+                    className="btn shrink-0"
+                    disabled={!hydrated || !workspaceId || !workspace}
+                    title={t('tooltip.exportWorkspace')}
+                    onClick={() => void handleExportWorkspace()}
+                  >
+                    {t('actions.export')}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn shrink-0"
+                    disabled={!hydrated}
+                    title={t('tooltip.importWorkspace')}
+                    onClick={() => importInputRef.current?.click()}
+                  >
+                    {t('actions.import')}
+                  </button>
+
+                  <input
+                    ref={importInputRef}
+                    type="file"
+                    accept="application/json,.json"
+                    className="hidden"
+                    onChange={(event) => void handleImportWorkspace(event)}
+                  />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
