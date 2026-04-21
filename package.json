@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build --configLoader native && node scripts/ensure-gh-pages-fallback.mjs",
+    "build": "tsc -b && vite build --configLoader native && node scripts/generate-localized-pages.mjs && node scripts/ensure-gh-pages-fallback.mjs",
     "build:gh": "npm run build",
     "build:native": "npm run build",
     "lint": "eslint .",
