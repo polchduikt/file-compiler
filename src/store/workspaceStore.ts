@@ -2,8 +2,8 @@ import { create } from 'zustand'
 import { DEFAULT_WORKSPACE_NAME } from '../config/app'
 import { mergeFilesByPath } from '../lib/file-system'
 import { createId } from '../lib/id'
-import { storage, STORAGE_KEYS } from '../lib/storage'
 import { parseWorkspaceBackup } from '../lib/workspace-backup'
+import { workspaceRepository } from '../repositories/workspaceRepository'
 import {
   createWorkspaceRecord,
   createWorkspaceSummary,
@@ -34,19 +34,19 @@ type WorkspaceState = {
 }
 
 async function saveWorkspaceIndex(index: WorkspaceSummary[]) {
-  await storage.setItem(STORAGE_KEYS.workspacesIndex, index)
+  await workspaceRepository.setWorkspaceIndex(index)
 }
 
 async function saveWorkspace(workspace: Workspace) {
-  await storage.setItem(STORAGE_KEYS.workspace(workspace.id), workspace)
+  await workspaceRepository.setWorkspace(workspace)
 }
 
 async function loadWorkspaceIndex() {
-  return storage.getItem<WorkspaceSummary[]>(STORAGE_KEYS.workspacesIndex)
+  return workspaceRepository.getWorkspaceIndex()
 }
 
 async function loadWorkspace(id: string) {
-  return storage.getItem<Workspace>(STORAGE_KEYS.workspace(id))
+  return workspaceRepository.getWorkspace(id)
 }
 
 function normalizeWorkspaceIndexNames(index: WorkspaceSummary[]) {
@@ -204,7 +204,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
       workspaces: nextIndex,
     })
 
-    await storage.removeItem(STORAGE_KEYS.workspace(id))
+    await workspaceRepository.removeWorkspace(id)
     await saveWorkspaceIndex(nextIndex)
 
     if (!nextActiveWorkspaceId) {

@@ -1,89 +1,107 @@
 # File Compiler
 
-File Compiler is a browser-first web app that merges many local files into a single output document, audits, migration prep, and code review workflows.
+File Compiler is a browser-only web app for merging local project files into one clean output.  
+You can copy the merged result or download it as `.txt` / `.zip` without uploading source files to any backend.
+
 ## Overview
 
-The app helps you:
-
-- collect files by drag-and-drop or file/folder pickers
-- filter what gets merged by extension
-- add path-aware separators between files
-- preview merged output in a Monaco editor
-- copy output to clipboard or download as `.txt` / `.zip`
-- keep multiple persistent workspaces in browser storage
-
-Everything runs client-side. Files are not uploaded to a server.
-
-## Technology Stack
-
-- **Language**: TypeScript
-- **UI**: React 19
-- **Build Tool**: Vite 8
-- **Styling**: Tailwind CSS 4
-- **State Management**: Zustand
-- **Local Persistence**: localForage (IndexedDB/WebStorage)
-- **Compression**: JSZip
-- **Editor/Preview**: Monaco Editor (`@monaco-editor/react`)
-- **Linting**: ESLint 9
-- **Deployment**: GitHub Actions + GitHub Pages
-
-## Architecture Highlights
-
-- **Browser-only processing**: merge logic is executed in a Web Worker.
-- **Deterministic merging**: files are normalized, sorted, and merged by explicit rules.
-- **Workspace persistence**: each workspace stores files and merge settings locally.
-- **Name normalization**: workspace names are deduplicated and migrated automatically.
-- **Safety for large inputs**: preview is truncated by configurable character limit.
-- **Binary-aware ingestion**: text vs binary is detected heuristically before merge.
+The app is designed for code reviews, AI context preparation, migration audits, and documentation exports.  
+Everything runs client-side (React + Web Worker + IndexedDB).
 
 ## Core Features
 
 ### Workspace Management
 
-- create, delete, and select workspaces
-- automatic unique names (`Workspace 1`, `Workspace 2`, ...)
-- hydration and migration of stored workspace names on startup
+- create, rename, delete, and switch workspaces
+- automatic workspace naming (`Workspace 1`, `Workspace 2`, ...)
+- workspace export to JSON backup
+- workspace import from JSON backup (for browser-to-browser migration)
 
-### File Ingestion
+### File Collection
 
 - drag and drop files
-- add files from picker
-- add folders from picker (`webkitdirectory`, supported in Chrome/Edge)
-- replace files by path and keep a sorted virtual file list
+- add files via picker
+- add folder via `webkitdirectory` (Chrome/Edge)
+- project tree modal with folder navigation
+- project tree search/filter by file or folder name
+- bulk tree actions: Select all / Clear all
 
 ### Merge Controls
 
 - include all extensions or whitelist specific extensions
-- custom separator template with tokens: `{{path}}`, `{{name}}`
-- newline mode support (`LF` / `CRLF`)
+- configurable separator template with tokens: `{{path}}`, `{{name}}`
+- newline mode (`LF` / `CRLF`)
 - optional ZIP output
+- stack presets for quick setup:
+  - Java
+  - JavaScript / TypeScript
+  - React Frontend
+  - Node.js Backend
+  - Python
+  - C# / .NET
+  - PHP
+  - Go
+  - Rust
+  - Kotlin / Android
+  - Swift / iOS
+  - Ruby / Rails
+  - DevOps / IaC
+  - Docs / Markdown
 
-### Output & Preview
+### Preview & Output
 
-- Monaco-based read-only preview with inferred language mode
-- live line/character counters
-- copy to clipboard
-- download merged text or ZIP archive
+- read-only Monaco preview
+- live line and character counters
+- copy merged output to clipboard
+- download merged output as text or ZIP
+
+
+## Architecture
+
+- UI in `src/components`
+- orchestration and app-level behavior in `src/hooks`
+- pure utilities and domain logic in `src/lib`
+- persistence abstraction in `src/repositories`
+- state container in `src/store`
+- heavy merge processing in `src/workers` (Web Worker)
+
 
 ## Project Structure
 
 ```text
 src/
-  components/       # UI building blocks
-  config/           # app-level constants
-  hooks/            # React hooks (merge orchestration)
-  lib/              # pure utilities (ingest, merge, storage, naming, download)
-  store/            # Zustand workspace store
-  workers/          # Web Worker merge execution
-  App.tsx           # application shell and flow orchestration
+  assets/           # static assets imported by app code
+  components/       # reusable UI components
+  config/           # app constants and config values
+  content/          # static content (documentation page text)
+  hooks/            # app/workspace orchestration hooks
+  i18n/             # localization context and dictionaries
+  lib/              # pure utilities (merge, ingest, routing, presets, backup)
+  repositories/     # storage repository abstractions
+  store/            # Zustand state store
+  workers/          # Web Worker for merge execution
+  App.tsx           # top-level app shell
 ```
+
+## Technology Stack
+
+- TypeScript
+- React 19
+- Vite 8
+- Tailwind CSS 4
+- Zustand
+- localForage (IndexedDB/WebStorage)
+- JSZip
+- Monaco Editor (`@monaco-editor/react`)
+- ESLint 9
+- GitHub Actions + GitHub Pages
 
 ## Getting Started
 
 ### Prerequisites
 
-- **Node.js** 20+
-- **npm** 10+
+- Node.js 20+
+- npm 10+
 
 ### Install
 
@@ -99,10 +117,11 @@ npm run dev
 
 Default local URL: `http://localhost:5173`
 
-### Lint
+### Quality Checks
 
 ```bash
 npm run lint
+npx tsc -b --pretty false
 ```
 
 ### Production Build
@@ -114,14 +133,14 @@ npm run build
 ## NPM Scripts
 
 - `npm run dev` - start Vite dev server
-- `npm run build` - type-check and build production bundle
+- `npm run build` - type-check, build, generate localized pages, create GH Pages fallback
 - `npm run build:gh` - alias for GitHub Pages build
-- `npm run build:native` - native config-loader build (optional local fallback)
+- `npm run build:native` - alias of build
 - `npm run preview` - preview production bundle locally
 - `npm run lint` - run ESLint
 
-## Data and Privacy
+## Data & Privacy
 
-- No server-side processing
-- No file uploads
-- Workspaces are saved locally in browser storage only
+- no backend file processing
+- no file uploads
+- workspaces and files are stored only in browser storage for the current domain
