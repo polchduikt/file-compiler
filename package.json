@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:gh": "tsc -b && vite build",
-    "build:native": "tsc -b && vite build --configLoader native",
+    "build": "tsc -b && vite build --configLoader native && node scripts/ensure-gh-pages-fallback.mjs",
+    "build:gh": "npm run build",
+    "build:native": "npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

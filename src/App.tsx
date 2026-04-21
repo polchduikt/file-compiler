@@ -11,14 +11,16 @@ import { useI18n } from './i18n/useI18n'
 import { downloadTextAsFile, downloadTextAsZip } from './lib/download'
 import { ingestFiles } from './lib/ingest'
 import { resolveDownloadPlan, resolvePreviewValue } from './lib/merge'
+import { appPathToBrowserPath, buildLocalizedPath, resolveRoute, type AppPage } from './lib/routing'
 import { getNextWorkspaceName } from './lib/workspace'
 import { useWorkspaceStore } from './store/workspaceStore'
+import type { Locale } from './i18n/translations'
 
 type Theme = 'light' | 'dark'
-type Page = 'app' | 'docs'
 
 const THEME_STORAGE_KEY = 'file-compiler:theme:v1'
 const WORKSPACE_NAME_RE = /^workspace\s+(\d+)$/i
+const APP_BASE_PATH = import.meta.env.BASE_URL || '/'
 
 function detectTheme(): Theme {
   if (typeof window === 'undefined') return 'dark'
@@ -35,11 +37,6 @@ function localizeWorkspaceName(name: string, prefix: string) {
   const match = name.trim().match(WORKSPACE_NAME_RE)
   if (!match) return name
   return `${prefix} ${match[1]}`
-}
-
-function detectPageFromHash(): Page {
-  if (typeof window === 'undefined') return 'app'
-  return window.location.hash === '#docs' ? 'docs' : 'app'
 }
 
 function App() {
@@ -64,7 +61,7 @@ function App() {
   const [ingestError, setIngestError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [theme, setTheme] = useState<Theme>(() => detectTheme())
-  const [activePage, setActivePage] = useState<Page>(() => detectPageFromHash())
+  const [activePage, setActivePage] = useState<AppPage>('app')
   const [projectTreeFiles, setProjectTreeFiles] = useState<File[] | null>(null)
   const [renameWorkspaceId, setRenameWorkspaceId] = useState<string | null>(null)
   const { mergeError, mergeResult } = useMergeResult(workspace)
@@ -89,7 +86,19 @@ function App() {
         activePage === 'docs' ? t('docs.metaDescription') : t('meta.description'),
       )
     }
-  }, [activePage, t])
+
+    const canonicalLink = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    const canonicalPath = buildLocalizedPath(locale, activePage)
+    const canonicalUrl = new URL(canonicalPath, window.location.origin).toString()
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', canonicalUrl)
+    }
+
+    const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]')
+    if (ogUrl) {
+      ogUrl.setAttribute('content', canonicalUrl)
+    }
+  }, [activePage, locale, t])
 
   useEffect(() => {
     const root = document.documentElement
@@ -113,14 +122,27 @@ function App() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
+    const syncRouteWithLocation = () => {
+      const route = resolveRoute(window.location.pathname, locale, window.location.hash, APP_BASE_PATH)
+      setActivePage(route.page)
+      if (route.locale !== locale) {
+        setLocale(route.locale)
+      }
 
-    const onHashChange = () => {
-      setActivePage(detectPageFromHash())
+      const canonicalBrowserPath = appPathToBrowserPath(route.path, APP_BASE_PATH)
+      if (window.location.pathname !== canonicalBrowserPath || window.location.hash) {
+        window.history.replaceState(
+          null,
+          '',
+          `${canonicalBrowserPath}${window.location.search}`,
+        )
+      }
     }
 
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
+    syncRouteWithLocation()
+    window.addEventListener('popstate', syncRouteWithLocation)
+    return () => window.removeEventListener('popstate', syncRouteWithLocation)
+  }, [locale, setLocale])
 
   const handleCopy = async () => {
     try {
@@ -212,18 +234,22 @@ function App() {
     setProjectTreeFiles(null)
   }
 
-  const handleNavigatePage = (nextPage: Page) => {
-    setActivePage(nextPage)
-
-    if (nextPage === 'docs') {
-      if (window.location.hash !== '#docs') {
-        window.history.pushState(null, '', '#docs')
-      }
-      return
+  const handleSwitchLocale = (nextLocale: Locale) => {
+    if (nextLocale === locale) return
+    setLocale(nextLocale)
+    const nextAppPath = buildLocalizedPath(nextLocale, activePage)
+    const nextBrowserPath = appPathToBrowserPath(nextAppPath, APP_BASE_PATH)
+    if (window.location.pathname !== nextBrowserPath || window.location.hash) {
+      window.history.pushState(null, '', `${nextBrowserPath}${window.location.search}`)
     }
+  }
 
-    if (window.location.hash) {
-      window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`)
+  const handleNavigatePage = (nextPage: AppPage) => {
+    setActivePage(nextPage)
+    const nextAppPath = buildLocalizedPath(locale, nextPage)
+    const nextBrowserPath = appPathToBrowserPath(nextAppPath, APP_BASE_PATH)
+    if (window.location.pathname !== nextBrowserPath || window.location.hash) {
+      window.history.pushState(null, '', `${nextBrowserPath}${window.location.search}`)
     }
   }
 
@@ -265,7 +291,7 @@ function App() {
                 type="button"
                 className={locale === 'en' ? 'segment is-active' : 'segment'}
                 title={t('tooltip.langEn')}
-                onClick={() => setLocale('en')}
+                onClick={() => handleSwitchLocale('en')}
               >
                 {t('language.short.en')}
               </button>
@@ -273,7 +299,7 @@ function App() {
                 type="button"
                 className={locale === 'uk' ? 'segment is-active' : 'segment'}
                 title={t('tooltip.langUk')}
-                onClick={() => setLocale('uk')}
+                onClick={() => handleSwitchLocale('uk')}
               >
                 {t('language.short.uk')}
               </button>
