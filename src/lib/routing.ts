@@ -1,6 +1,6 @@
 import type { Locale } from '../i18n/translations'
 
-export type AppPage = 'app' | 'docs'
+export type AppPage = 'app' | 'about' | 'docs' | 'chatgptContext' | 'mergeCodeFiles'
 
 type RouteResult = {
   locale: Locale
@@ -9,6 +9,13 @@ type RouteResult = {
 }
 
 const DEFAULT_PAGE: AppPage = 'app'
+const PAGE_SEGMENTS: Record<AppPage, Record<Locale, string>> = {
+  app: { en: '', uk: '' },
+  about: { en: 'about', uk: 'pro-nas' },
+  docs: { en: 'docs', uk: 'docs' },
+  chatgptContext: { en: 'chatgpt-context', uk: 'kontekst-dlya-chatgpt' },
+  mergeCodeFiles: { en: 'merge-code-files', uk: 'obyednaty-kodovi-faily' },
+}
 
 function normalizeBase(basePath: string) {
   if (!basePath || basePath === '/') return '/'
@@ -54,8 +61,23 @@ export function browserPathToAppPath(pathname: string, basePath: string) {
 }
 
 export function buildLocalizedPath(locale: Locale, page: AppPage) {
-  if (page === 'docs') return `/${locale}/docs`
-  return `/${locale}`
+  const segment = PAGE_SEGMENTS[page][locale]
+  return segment ? `/${locale}/${segment}` : `/${locale}`
+}
+
+function resolveLocalizedPage(locale: Locale, slug: string): AppPage | null {
+  const normalizedSlug = slug.toLowerCase()
+
+  for (const [page, segments] of Object.entries(PAGE_SEGMENTS) as Array<
+    [AppPage, Record<Locale, string>]
+  >) {
+    if (page === 'app') continue
+    if (segments[locale].toLowerCase() === normalizedSlug) {
+      return page
+    }
+  }
+
+  return null
 }
 
 export function resolveRoute(
@@ -93,11 +115,21 @@ export function resolveRoute(
   }
 
   if (segments.length === 1) {
-    return { locale: routeLocale, page: DEFAULT_PAGE, path: buildLocalizedPath(routeLocale, DEFAULT_PAGE) }
+    return {
+      locale: routeLocale,
+      page: DEFAULT_PAGE,
+      path: buildLocalizedPath(routeLocale, DEFAULT_PAGE),
+    }
   }
 
-  if (segments.length === 2 && segments[1] === 'docs') {
-    return { locale: routeLocale, page: 'docs', path: buildLocalizedPath(routeLocale, 'docs') }
+  const localizedSlug = segments.slice(1).join('/')
+  const localizedPage = resolveLocalizedPage(routeLocale, localizedSlug)
+  if (localizedPage) {
+    return {
+      locale: routeLocale,
+      page: localizedPage,
+      path: buildLocalizedPath(routeLocale, localizedPage),
+    }
   }
 
   return { locale: routeLocale, page: DEFAULT_PAGE, path: buildLocalizedPath(routeLocale, DEFAULT_PAGE) }

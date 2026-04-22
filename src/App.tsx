@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
+import { AboutPage } from './components/AboutPage'
 import { DocumentationPage } from './components/DocumentationPage'
 import { Dropzone } from './components/Dropzone'
 import { FileList } from './components/FileList'
+import { LandingPage } from './components/LandingPage'
 import { OptionsPanel } from './components/OptionsPanel'
 import { PreviewPanel } from './components/PreviewPanel'
 import { ProjectTreeModal } from './components/ProjectTreeModal'
@@ -17,7 +19,6 @@ function App() {
   const { activePage, handleNavigatePage, handleSwitchLocale, setTheme, theme } = useAppChrome({
     locale,
     setLocale,
-    t,
   })
   const {
     clearFiles,
@@ -63,9 +64,17 @@ function App() {
         theme={theme}
       />
 
-      {activePage === 'docs' ? (
+      {activePage === 'about' ? (
+        <main className="min-h-0 flex-1 overflow-auto p-6">
+          <AboutPage />
+        </main>
+      ) : activePage === 'docs' ? (
         <main className="min-h-0 flex-1 overflow-auto p-6">
           <DocumentationPage />
+        </main>
+      ) : activePage === 'chatgptContext' || activePage === 'mergeCodeFiles' ? (
+        <main className="min-h-0 flex-1 overflow-auto p-6">
+          <LandingPage page={activePage} />
         </main>
       ) : (
         <div className="flex min-h-0 flex-1 gap-6 overflow-hidden p-6">

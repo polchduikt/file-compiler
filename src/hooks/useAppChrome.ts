@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { I18nContextValue } from '../i18n/context'
+import { getPageMeta } from '../content/seo'
 import type { Locale } from '../i18n/translations'
 import {
   appPathToBrowserPath,
@@ -13,7 +13,6 @@ export type Theme = 'light' | 'dark'
 type UseAppChromeParams = {
   locale: Locale
   setLocale: (locale: Locale) => void
-  t: I18nContextValue['t']
 }
 
 const THEME_STORAGE_KEY = 'file-compiler:theme:v1'
@@ -30,19 +29,16 @@ function detectTheme(): Theme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-export function useAppChrome({ locale, setLocale, t }: UseAppChromeParams) {
+export function useAppChrome({ locale, setLocale }: UseAppChromeParams) {
   const [theme, setTheme] = useState<Theme>(() => detectTheme())
   const [activePage, setActivePage] = useState<AppPage>('app')
 
   useEffect(() => {
-    document.title =
-      activePage === 'docs' ? `${t('nav.documentation')} - ${t('app.title')}` : t('meta.title')
+    const pageMeta = getPageMeta(locale, activePage)
+    document.title = pageMeta.title
     const descriptionTag = document.querySelector('meta[name="description"]')
     if (descriptionTag) {
-      descriptionTag.setAttribute(
-        'content',
-        activePage === 'docs' ? t('docs.metaDescription') : t('meta.description'),
-      )
+      descriptionTag.setAttribute('content', pageMeta.description)
     }
 
     const canonicalLink = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
@@ -56,7 +52,29 @@ export function useAppChrome({ locale, setLocale, t }: UseAppChromeParams) {
     if (ogUrl) {
       ogUrl.setAttribute('content', canonicalUrl)
     }
-  }, [activePage, locale, t])
+
+    const ogTitle = document.querySelector<HTMLMetaElement>('meta[property="og:title"]')
+    if (ogTitle) {
+      ogTitle.setAttribute('content', pageMeta.ogTitle)
+    }
+
+    const ogDescription = document.querySelector<HTMLMetaElement>('meta[property="og:description"]')
+    if (ogDescription) {
+      ogDescription.setAttribute('content', pageMeta.ogDescription)
+    }
+
+    const twitterTitle = document.querySelector<HTMLMetaElement>('meta[name="twitter:title"]')
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', pageMeta.ogTitle)
+    }
+
+    const twitterDescription = document.querySelector<HTMLMetaElement>(
+      'meta[name="twitter:description"]',
+    )
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', pageMeta.ogDescription)
+    }
+  }, [activePage, locale])
 
   useEffect(() => {
     const root = document.documentElement

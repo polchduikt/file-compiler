@@ -43,6 +43,14 @@ export function AppHeader({
             <div className="ml-2 flex items-center gap-2">
               <button
                 type="button"
+                className={activePage === 'about' ? 'btn btn-primary h-9 px-3' : 'btn h-9 px-3'}
+                title={t('tooltip.navAbout')}
+                onClick={() => onNavigatePage('about')}
+              >
+                {t('nav.about')}
+              </button>
+              <button
+                type="button"
                 className={activePage === 'docs' ? 'btn btn-primary h-9 px-3' : 'btn h-9 px-3'}
                 title={t('tooltip.navDocs')}
                 onClick={() => onNavigatePage('docs')}
