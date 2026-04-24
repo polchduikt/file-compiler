@@ -26,8 +26,11 @@ function normalizeBase(basePath: string) {
 function normalizePath(pathname: string) {
   if (!pathname || pathname === '/') return '/'
   const withLeadingSlash = pathname.startsWith('/') ? pathname : `/${pathname}`
+  const hasTrailingSlash = withLeadingSlash.endsWith('/')
   const trimmed = withLeadingSlash.replace(/\/+$/, '')
-  return trimmed || '/'
+  const normalized = trimmed || '/'
+  if (normalized === '/') return '/'
+  return hasTrailingSlash ? `${normalized}/` : normalized
 }
 
 function toLocale(segment: string | undefined): Locale | null {
@@ -62,7 +65,7 @@ export function browserPathToAppPath(pathname: string, basePath: string) {
 
 export function buildLocalizedPath(locale: Locale, page: AppPage) {
   const segment = PAGE_SEGMENTS[page][locale]
-  return segment ? `/${locale}/${segment}` : `/${locale}`
+  return segment ? `/${locale}/${segment}/` : `/${locale}/`
 }
 
 function resolveLocalizedPage(locale: Locale, slug: string): AppPage | null {

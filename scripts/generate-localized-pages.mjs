@@ -5,7 +5,11 @@ const distDir = resolve(process.cwd(), 'dist')
 const sourceFile = resolve(distDir, 'index.html')
 const sitemapFile = resolve(distDir, 'sitemap.xml')
 const siteUrl = 'https://file-compiler.techindustry.app'
-const lastModified = '2026-04-22'
+const lastModified = '2026-04-24'
+
+function localizedUrl(locale, slug = '') {
+  return slug ? `${siteUrl}/${locale}/${slug}/` : `${siteUrl}/${locale}/`
+}
 
 function escapeHtml(value) {
   return value
@@ -157,17 +161,17 @@ const aboutContent = {
     ],
     cards: [
       {
-        href: `${siteUrl}/en/chatgpt-context`,
+        href: localizedUrl('en', 'chatgpt-context'),
         title: 'Prepare ChatGPT context',
         description: 'Pick only the useful folders and generate a clean prompt-ready project context.',
       },
       {
-        href: `${siteUrl}/en/merge-code-files`,
+        href: localizedUrl('en', 'merge-code-files'),
         title: 'Merge code files online',
         description: 'Combine many files into one readable output for reviews, audits, and documentation.',
       },
       {
-        href: `${siteUrl}/en/docs`,
+        href: localizedUrl('en', 'docs'),
         title: 'Learn the workflow',
         description: 'See how workspaces, presets, file trees, export, and download options work.',
       },
@@ -217,17 +221,17 @@ const aboutContent = {
     ],
     cards: [
       {
-        href: `${siteUrl}/uk/kontekst-dlya-chatgpt`,
+        href: localizedUrl('uk', 'kontekst-dlya-chatgpt'),
         title: 'Підготувати контекст для ChatGPT',
         description: 'Оберіть лише потрібні папки й згенеруйте чистий контекст для prompt або аналізу.',
       },
       {
-        href: `${siteUrl}/uk/obyednaty-kodovi-faily`,
+        href: localizedUrl('uk', 'obyednaty-kodovi-faily'),
         title: 'Обʼєднати кодові файли',
         description: 'Зберіть багато файлів в один читабельний результат для ревʼю, аудиту чи документації.',
       },
       {
-        href: `${siteUrl}/uk/docs`,
+        href: localizedUrl('uk', 'docs'),
         title: 'Подивитися інструкцію',
         description: 'Дізнайтесь, як працюють воркспейси, пресети, дерево файлів та експорт результату.',
       },
@@ -399,7 +403,7 @@ const landingContent = {
 
 function renderAppBody(locale) {
   const content = appContent[locale]
-  const primaryHref = locale === 'uk' ? `${siteUrl}/uk/pro-nas` : `${siteUrl}/en/about`
+  const primaryHref = locale === 'uk' ? localizedUrl('uk', 'pro-nas') : localizedUrl('en', 'about')
 
   return {
     html: `
@@ -412,7 +416,7 @@ function renderAppBody(locale) {
             <ul class="mt-6 grid gap-3 md:grid-cols-3">${renderBulletCards(content.featureList)}</ul>
             <div class="mt-6 flex flex-wrap gap-3">
               <a class="inline-flex items-center justify-center rounded-xl border border-indigo-200 bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" href="${primaryHref}">${escapeHtml(content.primaryCta)}</a>
-              <a class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900" href="${siteUrl}/${locale}/docs">${escapeHtml(content.secondaryCta)}</a>
+              <a class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900" href="${localizedUrl(locale, 'docs')}">${escapeHtml(content.secondaryCta)}</a>
             </div>
           </section>
         </main>
@@ -455,8 +459,8 @@ function renderAboutBody(locale) {
                 </div>
                 <div class="flex flex-wrap gap-2">${tags}</div>
                 <div class="flex flex-wrap gap-3">
-                  <a class="inline-flex items-center justify-center rounded-xl border border-indigo-200 bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" href="${siteUrl}/${locale}">${escapeHtml(content.ctaApp)}</a>
-                  <a class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900" href="${siteUrl}/${locale}/docs">${escapeHtml(content.ctaDocs)}</a>
+                  <a class="inline-flex items-center justify-center rounded-xl border border-indigo-200 bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" href="${localizedUrl(locale)}">${escapeHtml(content.ctaApp)}</a>
+                  <a class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900" href="${localizedUrl(locale, 'docs')}">${escapeHtml(content.ctaDocs)}</a>
                 </div>
               </div>
 
@@ -578,8 +582,8 @@ function renderLandingBody(locale, page) {
             <h1 class="mt-3 max-w-4xl text-3xl font-bold tracking-tight text-slate-950 md:text-4xl">${escapeHtml(content.title)}</h1>
             <p class="mt-4 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">${escapeHtml(content.description)}</p>
             <div class="mt-6 flex flex-wrap gap-3">
-              <a class="inline-flex items-center justify-center rounded-xl border border-indigo-200 bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" href="${siteUrl}/${locale}">${escapeHtml(content.ctaApp)}</a>
-              <a class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900" href="${siteUrl}/${locale}/docs">${escapeHtml(content.ctaDocs)}</a>
+              <a class="inline-flex items-center justify-center rounded-xl border border-indigo-200 bg-indigo-600 px-4 py-2 text-sm font-semibold text-white" href="${localizedUrl(locale)}">${escapeHtml(content.ctaApp)}</a>
+              <a class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900" href="${localizedUrl(locale, 'docs')}">${escapeHtml(content.ctaDocs)}</a>
             </div>
           </section>
           <section class="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
@@ -611,11 +615,11 @@ const variants = [
     ogTitle: 'Files To Context - Build AI-Ready Context from Your Files',
     ogDescription:
       'Collect many project files into one clean AI-ready context in-browser. Fast copy/download, no backend uploads.',
-    canonical: `${siteUrl}/en`,
+    canonical: localizedUrl('en'),
     alternates: {
-      en: `${siteUrl}/en`,
-      uk: `${siteUrl}/uk`,
-      xDefault: `${siteUrl}/en`,
+      en: localizedUrl('en'),
+      uk: localizedUrl('uk'),
+      xDefault: localizedUrl('en'),
     },
     changefreq: 'weekly',
     priority: '1.0',
@@ -639,11 +643,11 @@ const variants = [
     ogTitle: 'Files To Context - Збирайте контекст для нейромереж',
     ogDescription:
       'Обʼєднуйте файли проєкту в один чистий AI-контекст у браузері. Швидке копіювання та завантаження без бекенду.',
-    canonical: `${siteUrl}/uk`,
+    canonical: localizedUrl('uk'),
     alternates: {
-      en: `${siteUrl}/en`,
-      uk: `${siteUrl}/uk`,
-      xDefault: `${siteUrl}/en`,
+      en: localizedUrl('en'),
+      uk: localizedUrl('uk'),
+      xDefault: localizedUrl('en'),
     },
     changefreq: 'weekly',
     priority: '0.95',
@@ -667,11 +671,11 @@ const variants = [
     ogTitle: 'About Files To Context',
     ogDescription:
       'Explore the Files To Context story, workflow, use cases, and browser-only approach for AI-ready project context.',
-    canonical: `${siteUrl}/en/about`,
+    canonical: localizedUrl('en', 'about'),
     alternates: {
-      en: `${siteUrl}/en/about`,
-      uk: `${siteUrl}/uk/pro-nas`,
-      xDefault: `${siteUrl}/en/about`,
+      en: localizedUrl('en', 'about'),
+      uk: localizedUrl('uk', 'pro-nas'),
+      xDefault: localizedUrl('en', 'about'),
     },
     changefreq: 'weekly',
     priority: '0.92',
@@ -693,11 +697,11 @@ const variants = [
     ogTitle: 'Про Files To Context',
     ogDescription:
       'Ознайомтесь з історією, сценаріями використання та локальним browser-only підходом Files To Context.',
-    canonical: `${siteUrl}/uk/pro-nas`,
+    canonical: localizedUrl('uk', 'pro-nas'),
     alternates: {
-      en: `${siteUrl}/en/about`,
-      uk: `${siteUrl}/uk/pro-nas`,
-      xDefault: `${siteUrl}/en/about`,
+      en: localizedUrl('en', 'about'),
+      uk: localizedUrl('uk', 'pro-nas'),
+      xDefault: localizedUrl('en', 'about'),
     },
     changefreq: 'weekly',
     priority: '0.9',
@@ -719,11 +723,11 @@ const variants = [
     ogTitle: 'Files To Context Documentation',
     ogDescription:
       'Learn how to use workspaces, merge presets, project tree selection, and output actions in Files To Context.',
-    canonical: `${siteUrl}/en/docs`,
+    canonical: localizedUrl('en', 'docs'),
     alternates: {
-      en: `${siteUrl}/en/docs`,
-      uk: `${siteUrl}/uk/docs`,
-      xDefault: `${siteUrl}/en/docs`,
+      en: localizedUrl('en', 'docs'),
+      uk: localizedUrl('uk', 'docs'),
+      xDefault: localizedUrl('en', 'docs'),
     },
     changefreq: 'monthly',
     priority: '0.8',
@@ -745,11 +749,11 @@ const variants = [
     ogTitle: 'Документація Files To Context',
     ogDescription:
       'Дізнайтесь, як працювати з робочими просторами, деревом проєкту, пресетами та вивантаженням AI-контексту.',
-    canonical: `${siteUrl}/uk/docs`,
+    canonical: localizedUrl('uk', 'docs'),
     alternates: {
-      en: `${siteUrl}/en/docs`,
-      uk: `${siteUrl}/uk/docs`,
-      xDefault: `${siteUrl}/en/docs`,
+      en: localizedUrl('en', 'docs'),
+      uk: localizedUrl('uk', 'docs'),
+      xDefault: localizedUrl('en', 'docs'),
     },
     changefreq: 'monthly',
     priority: '0.8',
@@ -771,11 +775,11 @@ const variants = [
     ogTitle: 'Files To Context for ChatGPT',
     ogDescription:
       'Build clean ChatGPT-ready context from your codebase with project tree selection, presets, and zero backend uploads.',
-    canonical: `${siteUrl}/en/chatgpt-context`,
+    canonical: localizedUrl('en', 'chatgpt-context'),
     alternates: {
-      en: `${siteUrl}/en/chatgpt-context`,
-      uk: `${siteUrl}/uk/kontekst-dlya-chatgpt`,
-      xDefault: `${siteUrl}/en/chatgpt-context`,
+      en: localizedUrl('en', 'chatgpt-context'),
+      uk: localizedUrl('uk', 'kontekst-dlya-chatgpt'),
+      xDefault: localizedUrl('en', 'chatgpt-context'),
     },
     changefreq: 'weekly',
     priority: '0.9',
@@ -797,11 +801,11 @@ const variants = [
     ogTitle: 'Files To Context для ChatGPT',
     ogDescription:
       'Збирайте контекст для ChatGPT з вашого проєкту через дерево файлів, пресети та локальне обʼєднання без сервера.',
-    canonical: `${siteUrl}/uk/kontekst-dlya-chatgpt`,
+    canonical: localizedUrl('uk', 'kontekst-dlya-chatgpt'),
     alternates: {
-      en: `${siteUrl}/en/chatgpt-context`,
-      uk: `${siteUrl}/uk/kontekst-dlya-chatgpt`,
-      xDefault: `${siteUrl}/en/chatgpt-context`,
+      en: localizedUrl('en', 'chatgpt-context'),
+      uk: localizedUrl('uk', 'kontekst-dlya-chatgpt'),
+      xDefault: localizedUrl('en', 'chatgpt-context'),
     },
     changefreq: 'weekly',
     priority: '0.88',
@@ -823,11 +827,11 @@ const variants = [
     ogTitle: 'Merge Code Files Online with Files To Context',
     ogDescription:
       'Combine many code files into one organized output with separators, presets, and browser-only privacy.',
-    canonical: `${siteUrl}/en/merge-code-files`,
+    canonical: localizedUrl('en', 'merge-code-files'),
     alternates: {
-      en: `${siteUrl}/en/merge-code-files`,
-      uk: `${siteUrl}/uk/obyednaty-kodovi-faily`,
-      xDefault: `${siteUrl}/en/merge-code-files`,
+      en: localizedUrl('en', 'merge-code-files'),
+      uk: localizedUrl('uk', 'obyednaty-kodovi-faily'),
+      xDefault: localizedUrl('en', 'merge-code-files'),
     },
     changefreq: 'weekly',
     priority: '0.86',
@@ -849,11 +853,11 @@ const variants = [
     ogTitle: 'Обʼєднання кодових файлів з Files To Context',
     ogDescription:
       'Поєднуйте багато кодових файлів в один впорядкований результат із розділювачами, пресетами та приватною локальною обробкою.',
-    canonical: `${siteUrl}/uk/obyednaty-kodovi-faily`,
+    canonical: localizedUrl('uk', 'obyednaty-kodovi-faily'),
     alternates: {
-      en: `${siteUrl}/en/merge-code-files`,
-      uk: `${siteUrl}/uk/obyednaty-kodovi-faily`,
-      xDefault: `${siteUrl}/en/merge-code-files`,
+      en: localizedUrl('en', 'merge-code-files'),
+      uk: localizedUrl('uk', 'obyednaty-kodovi-faily'),
+      xDefault: localizedUrl('en', 'merge-code-files'),
     },
     changefreq: 'weekly',
     priority: '0.84',
